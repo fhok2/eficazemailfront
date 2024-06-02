@@ -21,7 +21,7 @@ export const useCsrfToken = () => {
           const token = response.data.csrfToken;
           setCsrfToken(token);
           axios.defaults.headers.common['X-CSRF-Token'] = token;
-          Cookies.set('_csrf', token, { path: '/', sameSite: 'Lax' }); // Criar o cookie _csrf aqui
+          Cookies.set('_csrf', token, { path: '/', sameSite: 'None' }); // Criar o cookie _csrf aqui
         }
       } catch (error) {
         console.error('Error fetching CSRF token:', error);
