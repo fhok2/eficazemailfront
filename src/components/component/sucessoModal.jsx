@@ -34,9 +34,9 @@ export default function Modal({ open, onClose, type, message, email }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className={`text-center ${type === "success" ? "text-green-500" : "text-red-500"}`}>
+      <DialogContent className="max-w-[425px]">
+        <DialogHeader >
+          <DialogTitle className={`text-center    ${type === "success" ? "text-green-500" : "text-red-500"}`}>
             {type === "success" ? "E-mail redirecionamento criado com sucesso" : "Ocorreu um erro"}
           </DialogTitle>
           <DialogClose>
@@ -55,20 +55,27 @@ export default function Modal({ open, onClose, type, message, email }) {
             )}
           </div>
           <div className="text-center">
-            <p className="text-md font-medium">{type === "success" ? "Seu endereço de e-mail é:" : ""}</p>
-            <p className="text-lg font-bold mt-3">{type === "success" ? email : message}</p>
-          </div>
+  <p className="text-[12px] font-medium">{type === "success" ? "Seu endereço de e-mail é:" : ""}</p>
+  <p className="text-sm font-bold mt-3 overflow-wrap break-word word-break break-all">{type === "success" ? email : message}</p>
+</div>
         </div>
         <DialogFooter>
           {type === "success" && (
             <div className="flex flex-col">
-              <Button variant="outline" className="w-full outline-none" onClick={handleCopyEmail}>
+              <Button variant="outline" className="w-11/12 outline-none" onClick={handleCopyEmail}>
                 <CopyIcon className="mr-2 h-4 w-4" />
                 {copied ? "Email copiado" : "Copiar Email"}
               </Button>
+
+              {type === "success" ? (
               <p className=" flex text-xs mt-2 text-gray-600">
-                <span className="text-red-500 mr-1 "><InfoCircledIcon/></span> Verifique sempre a caixa de spam, promoção, social ou lixeira quando usar o e-mail acima informado.
-              </p>
+                
+              <span className="text-red-500 mr-1 "><InfoCircledIcon/></span> Verifique sempre a caixa de spam, promoção, social ou lixeira quando usar o e-mail acima informado.
+            </p>
+            ) : (
+              ''
+            )}
+              
             </div>
           )}
         </DialogFooter>
