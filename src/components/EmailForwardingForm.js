@@ -127,7 +127,7 @@ export default function EmailForwardingForm() {
                   required
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
                 />
               </div>
               <div>
@@ -142,7 +142,7 @@ export default function EmailForwardingForm() {
                     title="Por favor, insira um prefixo de email válido usando apenas letras, números, pontos e sublinhados"
                     type="text"
                     value={customName}
-                    onChange={(e) => setCustomName(e.target.value)}
+                    onChange={(e) => setCustomName(e.target.value.toLowerCase())}
                     disabled={generateRandomName}
                   />
                   <span className="text-gray-500 dark:text-gray-400">

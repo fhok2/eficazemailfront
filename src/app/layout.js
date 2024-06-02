@@ -15,8 +15,6 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isDashboard = pathname === '/dashboard';
 
-  console.log('Current Pathname:', pathname);
-  console.log('Is Dashboard:', isDashboard);
 
   return (
     <html lang="pt-br">

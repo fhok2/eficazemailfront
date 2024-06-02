@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useCsrfToken } from '../hooks/useCsrfToken';
@@ -8,7 +8,7 @@ const AddCookierToken = ({ children }) => {
 
   useEffect(() => {
     if (csrfToken) {
-      Cookies.set('_csrf', csrfToken);
+      Cookies.set('_csrf', csrfToken, { path: '/', sameSite: 'None' });
     }
   }, [csrfToken]);
 
