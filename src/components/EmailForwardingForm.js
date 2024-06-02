@@ -29,37 +29,42 @@ export default function EmailForwardingForm() {
   };
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(successEmail).then(() => {
-      setCopied(true);
-    }).catch(err => {
-      console.error('Failed to copy email: ', err);
-    });
+    navigator.clipboard
+      .writeText(successEmail)
+      .then(() => {
+        setCopied(true);
+      })
+      .catch((err) => {
+        console.error("Failed to copy email: ", err);
+      });
   };
 
   const handleGenerateRandomName = () => {
-    const randomNumber = new Date().getMilliseconds(); 
+    const randomNumber = new Date().getMilliseconds();
 
-    if(email){
-        const emailUser = email.replace(/@.*/, '');
-        const userEmailCustom = emailUser + randomNumber;
-        setCustomName(userEmailCustom);
+    if (email) {
+      const emailUser = email.replace(/@.*/, "");
+      const userEmailCustom = emailUser + randomNumber;
+      setCustomName(userEmailCustom);
     } else {
-        const baseEmail = "eficazmail";
-        const randomEmail =  baseEmail + randomNumber;
-        setCustomName(randomEmail);
+      const baseEmail = "eficazmail";
+      const randomEmail = baseEmail + randomNumber;
+      setCustomName(randomEmail);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || (!customName && !generateRandomName)) {
-      setError("Por favor, insira um endereço de e-mail válido e um nome personalizado ou escolha gerar um nome aleatório");
+      setError(
+        "Por favor, insira um endereço de e-mail válido e um nome personalizado ou escolha gerar um nome aleatório"
+      );
       setModalType("error");
       setIsModalOpen(true);
       return;
-    } 
-    
-    if (email.includes('@eficaz.email')) {
+    }
+
+    if (email.includes("@eficaz.email")) {
       setError("Endereço de e-mail não pode ser @eficaz.email");
       setEmail("");
       setModalType("error");
@@ -69,20 +74,24 @@ export default function EmailForwardingForm() {
 
     setError("");
     setLoading(true);
-    
+
     try {
-      const finalCustomName = generateRandomName ? customName : `${customName}@eficaz.email`;
+      const finalCustomName = generateRandomName
+        ? customName
+        : `${customName}@eficaz.email`;
 
       const response = await forwardEmail({
         userEmail: email,
         customName: finalCustomName,
       });
 
-      setSuccessMessage(`Email encaminhado com sucesso para ${response.data.address}`);
+      setSuccessMessage(
+        `Email encaminhado com sucesso para ${response.data.address}`
+      );
       setSuccessEmail(response.data.address);
       setCustomName("");
       setGenerateRandomName(false);
-      setCopied(false);  // Reset the copied state
+      setCopied(false); // Reset the copied state
       setModalType("success");
       setIsModalOpen(true);
     } catch (error) {
@@ -97,17 +106,17 @@ export default function EmailForwardingForm() {
 
   return (
     <div>
-       <div className="space-y-2 text-center mb-10">
-            <h1 className="text-2xl font-bold tracking-tight sm:text-4xl">Crie seu redirecionamento grátis</h1>
-            <p className="text-gray-500 dark:text-gray-400">
-              Informe seu email principal e crie um email de redirecionamento.
-            </p>
-          </div>
+      <div className="space-y-2 text-center mb-10">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-4xl">
+          Crie seu redirecionamento grátis
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400">
+          Informe seu email principal e crie um email de redirecionamento.
+        </p>
+      </div>
       <div className="w-11/12  bg-black max-w-4xl mx-auto  px-8 py-12 md:px-6 md:py-16 border border-border rounded-lg">
-      
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-6">
-      
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <Label htmlFor="primary-email">Email principal</Label>
@@ -122,19 +131,23 @@ export default function EmailForwardingForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="custom-email">Crie seu email de redirecionamento</Label>
+                <Label htmlFor="custom-email">
+                  Crie seu email de redirecionamento
+                </Label>
                 <div className="flex items-center space-x-2 mt-2">
                   <Input
                     id="custom-email"
-                    pattern="^[a-zA-Z0-9]+$"
+                    pattern="^[a-zA-Z0-9._]+$"
                     placeholder="Email personalizado"
-                    title="Por favor, insira um prefixo de email válido usando apenas letras e números"
+                    title="Por favor, insira um prefixo de email válido usando apenas letras, números, pontos e sublinhados"
                     type="text"
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     disabled={generateRandomName}
                   />
-                  <span className="text-gray-500 dark:text-gray-400">@eficaz.email</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    @eficaz.email
+                  </span>
                   <Button
                     className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                     type="button"
@@ -150,48 +163,54 @@ export default function EmailForwardingForm() {
                 <EmailIcon className="h-6 w-6 mr-2" />
                 {loading ? "Criando..." : "Criar redirecionamento"}
               </Button> */}
-                  <div className="flex  w-full justify-center ">
-                    <button
-                                    className="group flex h-14 items-center justify-center rounded-lg lg:text-lg md:text-lg text-sm text-white transition-all duration-100 glow-sm hover:glow-md lg:w-96 md:w-96 sm:w-96 w-72 "
-                                    style={{
+              <div className="flex  w-full justify-center ">
+                <button
+                  className="group flex h-14 items-center justify-center rounded-lg lg:text-lg md:text-lg text-sm text-white transition-all duration-100 glow-sm hover:glow-md lg:w-96 md:w-96 sm:w-96 w-72 "
+                  style={{
                     border: "none",
                     backgroundSize: "300% 100%",
                     transition: "all 0.3s ease 0s",
                     backgroundImage:
                       "linear-gradient(-60deg, rgb(9, 182, 162), rgb(107, 248, 231), rgb(9, 182, 162))",
                     backgroundPosition: "100% 0px",
-                                    }}
-                                    onMouseEnter={(e) => {
+                  }}
+                  onMouseEnter={(e) => {
                     e.target.style.backgroundPosition = "0% 0px";
-                                    }}
-                                    onMouseLeave={(e) => {
+                  }}
+                  onMouseLeave={(e) => {
                     e.target.style.backgroundPosition = "100% 0px";
-                                    }}
-                                    type="submit" disabled={loading}
-                                  >
-                                    <EmailIcon className="h-6 w-6 mr-2" />
-                {loading ? "Criando..." : "Criar redirecionamento"}
-                                    <svg
+                  }}
+                  type="submit"
+                  disabled={loading}
+                >
+                  <EmailIcon className="h-6 w-6 mr-2" />
+                  {loading ? "Criando..." : "Criar redirecionamento"}
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     className="ml-1 h-6 w-6 transition-all duration-150 group-hover:translate-x-2"
-                                    >
+                  >
                     <path d="M10.061 19.061L17.121 12l-7.06-7.061-2.122 2.122L12.879 12l-4.94 4.939z"></path>
-                                    </svg>
-                                  </button>
-                  </div>
+                  </svg>
+                </button>
+              </div>
             </form>
           </div>
           <div className="bg-gray-50 h-[200px] sm:h-[210px] md-h[200px] lg-h[200px] xl-h[200px] rounded-xl p-6 md:p-8  m-auto  ">
             <div className="space-y-4">
               <div className="space-y-4 flex flex-col justify-center items-center py-auto ">
-                <h2 className="text-xl font-bold text-gray-950 tracking-tight">O que é isso?</h2>
+                <h2 className="text-xl font-bold text-gray-950 tracking-tight">
+                  O que é isso?
+                </h2>
                 <p className="text-gray-800 text-[12px] sm:text-md md:text-md lg:text-md xl:text-md ">
-                  O redirecionamento cria um email secundário ligado ao seu email principal. Todos os emails recebidos neste email secundário são direcionados automaticamente para o seu email principal. Nenhuma copia de email fica guaradado em nossos servidores.
+                  O redirecionamento cria um email secundário ligado ao seu
+                  email principal. Todos os emails recebidos neste email
+                  secundário são direcionados automaticamente para o seu email
+                  principal. Nenhuma copia de email fica guaradado em nossos
+                  servidores.
                 </p>
               </div>
-      
             </div>
           </div>
         </div>
@@ -237,7 +256,6 @@ function EmailIcon(props) {
       viewBox="0 0 400 400"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      
     >
       <path
         d="M318.87 187.24C320.68 189.05 321.8 191.55 321.8 194.31V344.48C321.8 350 317.32 354.48 311.8 354.48H88.2C82.68 354.48 78.2 350 78.2 344.48V194.31C78.2 191.71 79.37 189.17 81 187.4"
@@ -246,7 +264,6 @@ function EmailIcon(props) {
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
-        
       />
       <path
         d="M318.49 186.9L208.62 272.68C203.56 276.63 196.45 276.63 191.39 272.68L81.51 186.9"
@@ -255,7 +272,6 @@ function EmailIcon(props) {
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
-       
       />
       <path
         d="M144.89 137.41L81.51 186.9"
@@ -264,7 +280,6 @@ function EmailIcon(props) {
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
-        
       />
       <path
         d="M318.49 186.9L255.11 137.41"
@@ -273,7 +288,6 @@ function EmailIcon(props) {
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
-        
       />
       <path
         d="M287.41 89.85C287.41 65.36 267.56 45.52 243.08 45.52C222.2 45.52 204.7 59.96 200 79.41C195.3 59.97 177.8 45.52 156.92 45.52C132.43 45.52 112.59 65.37 112.59 89.85C112.59 101.49 117.08 112.08 124.43 119.99L200 184.31L275.58 119.99C282.92 112.08 287.41 101.49 287.41 89.85Z"
@@ -282,7 +296,6 @@ function EmailIcon(props) {
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
-        
       />
     </svg>
   );
