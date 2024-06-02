@@ -11,15 +11,11 @@ const axiosInstance = axios.create({
 
 // Função para obter o token CSRF
 const getCsrfToken = async () => {
-  // Verifique se o token CSRF já está presente no cookie
-  const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('_csrf='));
-  if (csrfCookie) {
-    return csrfCookie.split('=')[1];
-  } else {
-    const { data } = await axiosInstance.get('/csrf/get-csrf-token');
-    return data.csrfToken;
-  }
+  const { data } = await axiosInstance.get('/csrf/get-csrf-token');
+  return data.csrfToken;
 };
+
+
 
 // Função para fazer requisições com CSRF usando Axios
 const axiosWithCsrf = async (url, options = {}) => {
