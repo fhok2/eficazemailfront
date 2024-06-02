@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+const baseURL = 'https://emailpix.up.railway.app/api';
 
 // Configurar uma instância do Axios
 const axiosInstance = axios.create({
