@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 export default function Modal({ open, onClose, type, message, email }) {
   const [isClient, setIsClient] = useState(false);
@@ -10,11 +11,10 @@ export default function Modal({ open, onClose, type, message, email }) {
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
+
   useEffect(() => {
     setCopied(false);
   }, [email]);
-
 
   const handleCopyEmail = () => {
     if (navigator?.clipboard?.writeText) {
@@ -61,10 +61,15 @@ export default function Modal({ open, onClose, type, message, email }) {
         </div>
         <DialogFooter>
           {type === "success" && (
-            <Button variant="outline" className="w-full outline-none" onClick={handleCopyEmail}>
-              <CopyIcon className="mr-2 h-4 w-4" />
-              {copied ? "Email copiado" : "Copiar Email"}
-            </Button>
+            <div className="flex flex-col">
+              <Button variant="outline" className="w-full outline-none" onClick={handleCopyEmail}>
+                <CopyIcon className="mr-2 h-4 w-4" />
+                {copied ? "Email copiado" : "Copiar Email"}
+              </Button>
+              <p className=" flex text-xs mt-2 text-gray-600">
+                <span className="text-red-500 mr-1 "><InfoCircledIcon/></span> Verifique sempre a caixa de spam, promoção, social ou lixeira quando usar o e-mail acima informado.
+              </p>
+            </div>
           )}
         </DialogFooter>
       </DialogContent>
@@ -132,3 +137,5 @@ function CopyIcon(props) {
     </svg>
   );
 }
+
+
