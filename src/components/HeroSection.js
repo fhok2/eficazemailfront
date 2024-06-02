@@ -89,7 +89,7 @@ const HeroSection = () => {
           </div>
         </div>
         
-        <div className="mb-16 flex min-w-[4rem] flex-col items-center justify-center gap-3 md:mb-24 md:flex-row z-10">
+        <div className="mb-16 flex min-w-[4rem] flex-col items-center justify-center gap-3 md:mb-24 md:flex-row ">
           <Link href="#testefree" legacyBehavior>
             <a className="transition-all duration-150">
               <button

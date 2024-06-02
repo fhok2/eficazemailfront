@@ -14,7 +14,7 @@ const Navbar = () => {
   const menuItems = [
     { label: 'Planos', href: '/planos' },
     { label: 'FAQ', href: '/faq' },
-    { label: 'Dashboard', href: '/dashboard' },
+    // { label: 'Dashboard', href: '/dashboard' },
   
   ];
 
