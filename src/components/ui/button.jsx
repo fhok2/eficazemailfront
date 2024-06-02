@@ -21,9 +21,9 @@ const buttonVariants = cva(
         link2: "border border-gray-200  text-gray-100 sm:text-gray-100 md:text-gray-100 lg:text-gray-100 xl:text-gray-100  bg-brand-dark  hover:bg-brand-dark-600 hover:text-gray-200 dark:border-gray-800  dark:hover:bg-brand-dark-600 dark:hover:text-gray-50",
       },
       size: {
-        default: "h-20 px-4 py-2",
-        sm: "h-20 rounded-md px-3",
-        lg: "h-14 rounded-md px-8",
+        default: "h-10 px-4 py-2",
+        sm: "h-10 rounded-md px-3",
+        lg: "h-10 rounded-md px-8",
         icon: "h-10 w-10",
       },
     },

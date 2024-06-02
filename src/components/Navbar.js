@@ -23,7 +23,7 @@ const Navbar = () => {
       <Link href="/">
         <div className="text-xl font-bold">EficazMail</div>
       </Link>
-      <div className="hidden md:flex space-x-4">
+      <div className="hidden md:flex space-x-4 ">
         {menuItems.map((item) => (
           <Link key={item.href} href={item.href} className="hover:text-accent3 transition duration-300">
             {item.label}

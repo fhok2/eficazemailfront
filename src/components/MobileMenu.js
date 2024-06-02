@@ -4,7 +4,7 @@ import Link from 'next/link';
 const MobileMenu = ({ menuItems = [], title = "Menu", isOpen, toggleMenu, buttonClassName = "", menuClassName = "" }) => {
   return (
     <div
-      className={`fixed inset-0 z-10 bg-gray-800 text-white transition-transform duration-300 transform ${
+      className={`fixed inset-0 z-20 bg-gray-800 text-white transition-transform duration-300 transform ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } md:hidden ${menuClassName}`}
     >

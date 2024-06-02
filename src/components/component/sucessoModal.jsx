@@ -56,7 +56,7 @@ export default function Modal({ open, onClose, type, message, email }) {
           </div>
           <div className="text-center">
             <p className="text-md font-medium">{type === "success" ? "Seu endereço de e-mail é:" : ""}</p>
-            <p className="text-xl font-bold">{type === "success" ? email : message}</p>
+            <p className="text-lg font-bold mt-3">{type === "success" ? email : message}</p>
           </div>
         </div>
         <DialogFooter>

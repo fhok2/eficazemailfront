@@ -146,10 +146,41 @@ export default function EmailForwardingForm() {
                   </Button>
                 </div>
               </div>
-              <Button variant="link2" className="w-full" type="submit" disabled={loading}>
+              {/* <Button variant="link2" className="w-full" type="submit" disabled={loading}>
                 <EmailIcon className="h-6 w-6 mr-2" />
                 {loading ? "Criando..." : "Criar redirecionamento"}
-              </Button>
+              </Button> */}
+                  <div className="flex  w-full justify-center ">
+                    <button
+                                    className="group flex h-14 items-center justify-center rounded-lg lg:text-lg md:text-lg text-sm text-white transition-all duration-100 glow-sm hover:glow-md lg:w-96 md:w-96 sm:w-96 w-72 "
+                                    style={{
+                    border: "none",
+                    backgroundSize: "300% 100%",
+                    transition: "all 0.3s ease 0s",
+                    backgroundImage:
+                      "linear-gradient(-60deg, rgb(9, 182, 162), rgb(107, 248, 231), rgb(9, 182, 162))",
+                    backgroundPosition: "100% 0px",
+                                    }}
+                                    onMouseEnter={(e) => {
+                    e.target.style.backgroundPosition = "0% 0px";
+                                    }}
+                                    onMouseLeave={(e) => {
+                    e.target.style.backgroundPosition = "100% 0px";
+                                    }}
+                                    type="submit" disabled={loading}
+                                  >
+                                    <EmailIcon className="h-6 w-6 mr-2" />
+                {loading ? "Criando..." : "Criar redirecionamento"}
+                                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="ml-1 h-6 w-6 transition-all duration-150 group-hover:translate-x-2"
+                                    >
+                    <path d="M10.061 19.061L17.121 12l-7.06-7.061-2.122 2.122L12.879 12l-4.94 4.939z"></path>
+                                    </svg>
+                                  </button>
+                  </div>
             </form>
           </div>
           <div className="bg-gray-50 h-[200px] sm:h-[210px] md-h[200px] lg-h[200px] xl-h[200px] rounded-xl p-6 md:p-8  m-auto  ">

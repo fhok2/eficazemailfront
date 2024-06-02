@@ -5,7 +5,8 @@ const baseURL = 'https://emailpix.up.railway.app/api';
 // Configurar uma instância do Axios
 const axiosInstance = axios.create({
   baseURL,
-  withCredentials: true, // Inclui os cookies em cada requisição
+  withCredentials: true,
+  timeout: 10000, // Tempo limite de 10 segundos
 });
 
 // Função para obter o token CSRF
