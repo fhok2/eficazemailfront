@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3005/api';
-// const baseURL = 'https://emailpix.up.railway.app/api';
+// const baseURL = 'http://localhost:3005/api';
+const baseURL = 'https://emailpix.up.railway.app/api';
 
 export const useCsrfToken = () => {
   const [csrfToken, setCsrfToken] = useState('');
