@@ -61,7 +61,7 @@ const ResetPassword = ({ isVisible, onClose, initialEmail }) => {
     e.preventDefault();
     setLoading(true);
     const baseUrl = window.location.origin; 
-    console.log(baseUrl);
+   
     const response = await requestPasswordReset(email,baseUrl);
 
     if (response.error) {

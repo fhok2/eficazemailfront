@@ -79,7 +79,7 @@ export const useMail = () => {
       
       setUserEmails((prevEmails) => [...prevEmails, dataMail]);
     } catch (err) {
-      console.log(err)
+      
       setError(err);
     } finally {
       setLoading(false);

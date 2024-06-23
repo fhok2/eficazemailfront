@@ -29,7 +29,7 @@ const forwardEmail = async (dataforwardEmail) => {
 
 const createEmail = async (email, forwardTo) => {
   try {
-    console.log("Data being sent to /email/create:", { email, forwardTo });
+ 
     const response = await api.post("/email/create", { email, forwardTo });
     return response.data;
   } catch (error) {
@@ -63,7 +63,7 @@ const activateForward = async (dataMail) => {
 
 
 const fetchUserEmails = async (page = 1, limit = 10) => {
-  console.log('esta fazendo requisições aqui')
+ 
   try {
     const response = await api.get(`/emails/listaremailusuario?page=${page}&limit=${limit}`);
     return response.data;
@@ -86,8 +86,8 @@ const updateDataMail = async (dataMail) => {
     forwardingEmail: dataMail.forwardingEmail,
     purpose: dataMail.purpose,
   };
-  console.log(dataMail);
-  console.log(dataFormatMail);
+ 
+  
 
   try {
     const response = await api.put(`/emails/atualizarencaminhamento/${userId}`, dataFormatMail, {

@@ -184,7 +184,7 @@ export const useAuth = () => {
   const handleRegister = async (userData) => {
     try {
       const response = await registerService(userData);
-      console.log(response);
+      
       if (response.error) {
         return { error: true, message: response.message };
       } else {

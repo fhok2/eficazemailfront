@@ -25,7 +25,7 @@ const NewUserLogin = ({ email }) => {
 
     const response = await handleRegister(userData);
     setLoading(true);
-    console.log(response);
+    
     if (response.error) {
       setError(response.message);
     } else {

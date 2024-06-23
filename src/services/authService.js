@@ -52,7 +52,7 @@ export const checkEmail = async (email) => {
     const response = await api.post('/user/check-email', { email });
     return response.data;
   } catch (error) {
-    console.log(error);
+   
     return { error: true, message: error.response ? error.response.data.message : 'An unexpected error occurred' };
   }
 };

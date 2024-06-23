@@ -46,7 +46,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
         forwardingEmail: redirectMail,
         purpose: emailPurpose,
       });
-      console.log("Email updated successfully")
+     
       updateLocalStorage();
       handleModalClose();
     } catch (error) {

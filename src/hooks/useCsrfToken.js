@@ -9,7 +9,7 @@ export const useCsrfToken = () => {
   const [csrfToken, setCsrfToken] = useState('');
 
   useEffect(() => {
-    console.log('useCsrfToken useEffect');
+  
     const fetchCsrfToken = async () => {
       try {
         const response = await axios.get(`${baseURL}/csrf/get-csrf-token`, { withCredentials: true });

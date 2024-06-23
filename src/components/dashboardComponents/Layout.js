@@ -26,7 +26,7 @@ const Sidebar = ({ sidebarOpen, closeSidebar }) => {
     if (result.error) {
       console.error(result.message);
     } else {
-      console.log('Logout bem-sucedido:', result);
+     
       window.location.href = '/';
     }
   };

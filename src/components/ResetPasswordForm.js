@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { resetPassword } from "@/services/authService";
 import { motion, AnimatePresence } from "framer-motion";
-import ResetPasswordModal from "./loginComponents/resetPassword";
 
 const SucessoMessage = () => {
   return (
@@ -51,7 +50,7 @@ const SucessoMessage = () => {
     </AnimatePresence>
   );
 };
-const ErrorMessage = ({ message }) => {
+const ErrorMessage = ({message}) => {
   return (
     <AnimatePresence>
       <motion.div
@@ -102,29 +101,9 @@ export default function ResetPasswordForm({ token }) {
   const [message, setMessage] = useState("");
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState(false);
-  const [serverMessage, setServerMessage] = useState("");
+  const[serverMessage, setServerMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
-  const [isModalVisible, setModalVisible] = useState(true);
-  const handleCloseModal = () => {
-    setModalVisible(false);
-  };
-  const handleOpenModal = () => {
-  setModalVisible(true);
-  console.log("Dentro do handleOpenModal, valor atual:", isModalVisible);
-};
-
-useEffect(() => {
-  console.log("isModalVisible changed:", isModalVisible);
-
-  // Opcional: para ver o valor atualizado após a re-renderização
-  const timer = setTimeout(() => {
-    console.log("Valor de isModalVisible após re-renderização:", isModalVisible);
-  }, 0);
-
-  return () => clearTimeout(timer);
-}, [isModalVisible]);
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -148,7 +127,7 @@ useEffect(() => {
 
       if (response.error) {
         setErro(true);
-        setServerMessage(response.message);
+        setServerMessage(response.message)
       } else {
         setSucesso(true);
         setPassword("");
@@ -158,14 +137,15 @@ useEffect(() => {
     },
     [password, confirmPassword, token, resetPassword, router]
   );
-  
 
   return (
     <section className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 mx-auto">
       <form onSubmit={handleSubmit} className="space-y-4">
         {message && <p className="text-red-500">{message}</p>}
         {sucesso && <SucessoMessage />}
-        {erro && <ErrorMessage message={serverMessage} />}
+        {erro && (
+          <ErrorMessage message={serverMessage} />
+        )}
         <div className="relative w-full h-14 mt-10 py-4 px-3 mb-10 border border-gray-400 focus-within:border-primary rounded-lg">
           <span className="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-custom-bg">
             Nova senha
@@ -199,22 +179,9 @@ useEffect(() => {
               setMessage("");
             }}
           />
+          
         </div>
-        {/* <div>
-          <p className="mt-4 text-right text-sm text-gray-300">
-            Erro ao gerar senha?{" "}
-            <a
-              onClick={(e) => {
-                e.preventDefault(); 
-                handleOpenModal();
-              }}
-              className="cursor-pointer underline font-medium hover:border-brand-light text-brand-dark hover:text-brand-dark-600 transition-all duration-150"
-            >
-              Enviar novo link 
-            </a>
-            .
-          </p>
-        </div> */}
+       
         <div>
           <Button
             variant="link2"
@@ -224,12 +191,8 @@ useEffect(() => {
             {isSubmitting ? "Processando..." : "Criar nova senha"}
           </Button>
         </div>
-        <ResetPasswordModal
-          isVisible={isModalVisible}
-          onClose={handleCloseModal}
-          initialEmail="" // ou remova esta prop se não for necessária
-        />
       </form>
+      
     </section>
   );
 }
