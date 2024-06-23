@@ -3,11 +3,12 @@ import React from 'react';
 import HeroSection from '@/components/HeroSection';
 import PricingSection from '@/components/PricingSection';
 import EmailForwardingForm from '@/components/EmailForwardingForm';
-import AddCookierToken from '@/components/addCokierToken';
+import HeroSection1 from '@/components/HeroSectin1';
+
 
 const Home = () => {
   return (
-    <AddCookierToken>
+    
       <div className="bg-black min-h-screen flex flex-col justify-between">
         <main>
           <div></div>
@@ -19,7 +20,7 @@ const Home = () => {
           </div>
         </main>
       </div>
-    </AddCookierToken>
+    
   );
 };
 

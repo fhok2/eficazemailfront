@@ -1,7 +1,7 @@
 import PlanCard from "./PlanCard";
 
 const free = [
-  "3 e-mails direcionais",
+  "Versão BETA gratuita", 
   "cancelar direcionamento",
   "reativar direcionamento",
 ];
@@ -21,10 +21,9 @@ const PricingSection = () => {
       id="planos"
       className="flex flex-col justify-center items-center gap-10 max-w-screen-lg mx-auto my-20 "
     >
-      <h2 className="-mb-8 font-semibold text-3xl">PLANOS & PREÇOS</h2>
-      <div className="mb-10 text-gray-200 md:text-xl px-5">Assuma o controle digital, sem fidelidade, sem cartão de crédito</div>
-      <div className="flex gap-10 flex-wrap  justify-center">
-        <article>
+      
+      <div className="flex flex-wrap  justify-center gap-10 sm:gap-4 md:gap-7 lg-gap-10 xl-gap-10">
+        <article >
           <PlanCard
             title="Grátis"
             seats="Individual"
@@ -40,7 +39,7 @@ const PricingSection = () => {
             textConditions="*Sem cartão de crédito ou cadastro necessário"
           />
         </article>
-        <article>
+        {/* <article>
           <PlanCard
             title="Mensal"
             seats="Individual"
@@ -55,7 +54,7 @@ const PricingSection = () => {
             features={pain}
             textConditions="*Sem fidelidade, cancele a qualquer momento"
           />
-        </article>
+        </article> */}
       </div>
     </section>
   );

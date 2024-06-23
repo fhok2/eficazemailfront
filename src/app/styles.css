@@ -1,0 +1,26 @@
+/* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .responsive-heading {
+    @apply text-[2.9rem] leading-[2.5rem] font-bold tracking-[-0.04rem] text-transparent drop-shadow-sm;
+
+    @screen sm {
+      @apply text-[4.9rem];
+    }
+
+    @screen md {
+      @apply text-[4.9rem];
+    }
+
+    @screen lg {
+      @apply text-8xl;
+    }
+
+    @screen xl {
+      @apply text-[5.75rem] mb-[2.5rem] tracking-[-0.115rem];
+    }
+  }
+}

@@ -1,4 +1,7 @@
-import api from "./api";
+
+import api from './api';
+import { jwtDecode } from "jwt-decode";
+
 
 const forwardEmail = async (dataforwardEmail) => {
   let customName = '';
@@ -14,8 +17,9 @@ const forwardEmail = async (dataforwardEmail) => {
     const response = await api.post("/emails/direcionaremail", {
       userEmail: dataforwardEmail.userEmail,
       customName,
+      purpose: dataforwardEmail.purpose,
     });
-    console.log("Response:", response.data);
+    
     return response.data;
   } catch (error) {
     console.error("Error forwarding email:", error);
@@ -34,10 +38,10 @@ const createEmail = async (email, forwardTo) => {
   }
 };
 
-const cancelForward = async (email) => {
+const cancelForward = async (dataMail) => {
   try {
-    console.log("Data being sent to /email/cancelForward:", { email });
-    const response = await api.post("/email/cancelForward", { email });
+    const response = await api.put(`/emails/cancelarencaminhamento/${dataMail.forwardTo}/${dataMail.email
+}`);
     return response.data;
   } catch (error) {
     console.error("Error canceling forward:", error);
@@ -45,4 +49,56 @@ const cancelForward = async (email) => {
   }
 };
 
-export { forwardEmail, createEmail, cancelForward };
+
+const activateForward = async (dataMail) => {
+  try {
+    const response = await api.put(`/emails/reativarencaminhamento/${dataMail.forwardTo}/${dataMail.email}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error activating forward:", error);
+    throw error;
+  }
+};
+
+
+
+const fetchUserEmails = async (page = 1, limit = 10) => {
+  console.log('esta fazendo requisições aqui')
+  try {
+    const response = await api.get(`/emails/listaremailusuario?page=${page}&limit=${limit}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting emails:", error);
+    throw error;
+  }
+};
+const updateDataMail = async (dataMail) => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  // Decodificar o token para obter o id e email
+  const decodedToken = jwtDecode(accessToken);
+  const userId = decodedToken.id;
+  const userEmail = decodedToken.email;
+
+  const dataFormatMail = {
+    userEmail: userEmail,
+    clientEmail: dataMail.clientEmail,
+    forwardingEmail: dataMail.forwardingEmail,
+    purpose: dataMail.purpose,
+  };
+  console.log(dataMail);
+  console.log(dataFormatMail);
+
+  try {
+    const response = await api.put(`/emails/atualizarencaminhamento/${userId}`, dataFormatMail, {
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating email:", error);
+    throw error;
+  }
+};
+
+
+
+export { forwardEmail, createEmail, cancelForward,fetchUserEmails,activateForward,updateDataMail};

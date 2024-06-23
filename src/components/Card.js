@@ -1,6 +1,4 @@
 import React from 'react';
-
-
 const Card = ({ title, description, children }) => {
   return (
     <div className="bg-primary text-secondary p-6 rounded-lg shadow-md">

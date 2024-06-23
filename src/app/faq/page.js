@@ -1,3 +1,5 @@
+import ReusableHeading from "@/components/component/ReusableComponents/ReusableHeading";
+import ReusableParagraph from "@/components/component/ReusableComponents/ReusableParagraph";
 import FAQAccordion from "@/components/FAQAccordion";
 import React from "react";
 
@@ -42,24 +44,18 @@ const faqItems = [
 const Faq = () => {
   return (
     <section className="m-auto flex w-full max-w-4xl flex-col items-center mt-20">
-      <h1
-        className="gradient-text text-center font-semibold leading-10 text-3xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl"
-        style={{
-          backgroundImage:
-            "linear-gradient(105deg, rgb(223, 223, 223) 39.15%, rgba(223, 223, 223, 0.67) 80.99%, rgba(223, 223, 223, 0) 119.58%)",
-          WebkitBackgroundClip: "text",
-          color: "transparent",
-        }}
-      >
-        Perguntas Frequentes
-      </h1>
-      <div className="mx-auto mt-20 px-10 text-center  max-w-[500px] ">
-        <p className="mt-4 leading-7 text-gray-200  text-sm">
-          Não consegue encontrar a resposta que procura? Entre em contato com
-          nossa equipe de suporte.
-        </p>
-      </div>
-      <aside className=" min-h-screen flex flex-col justify-between container mx-auto px-5">
+
+      <ReusableHeading>
+      Perguntas Frequentes
+      </ReusableHeading>
+      
+      
+        <ReusableParagraph>
+        Não consegue encontrar a resposta que procura? Entre em contato com
+        nossa equipe de suporte para obter mais informações.
+        </ReusableParagraph>
+      
+      <aside className=" min-h-screen mb-10 flex flex-col justify-between container mx-auto px-5">
         <FAQAccordion items={faqItems} />
       </aside>
     </section>

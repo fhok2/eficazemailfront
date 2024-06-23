@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
   @apply bg-custom-bg text-white; /* Aplica a cor de fundo e define a cor do texto como branca */
 }
@@ -13,6 +14,24 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .blinking-cursor {
   animation: blink 1s step-end infinite;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #000 !important;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-moz-autofill {
+    color: #000 !important;
+    background-color: transparent !important;
+}
+
+input:-internal-autofill-selected {
+    background-color: transparent !important;
+    color: #000 !important;
 }
 
 @keyframes blink {
@@ -34,9 +53,8 @@ input[type="number"]::-webkit-outer-spin-button {
   z-index: -1;
   border-radius: inherit;
 }
-/* styles.css */
 .text-gradient-gbv {
-  @apply gradient-accent-gbv;
+  background-image: linear-gradient(90.1deg, rgb(9 182 162 /10%), rgb(9 182 160 /20%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
