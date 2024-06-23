@@ -195,7 +195,8 @@ const LoginPage = () => {
                     </div>
                   )}
                   {!isNotRegistered && (
-                    <button className="font-semibold flex items-center justify-center rounded transition duration-100 ease-in-out focus:outline-none  bg-brand-dark focus:ring-1 focus:ring-white text-white hover:bg-brand-dark-600 disabled:border-gray-100 disabled:bg-gray-300  px-3 py-2 text-sm group w-full focus:ring-primary-700">
+                    <button className="font-semibold flex items-center justify-center rounded transition duration-100 ease-in-out focus:outline-none 
+                    h-14 bg-brand-dark focus:ring-1 focus:ring-white text-white hover:bg-brand-dark-600 disabled:border-gray-100 disabled:bg-gray-300  px-3 py-2 text-sm group w-full focus:ring-primary-700">
                       <span className="">
                         {loading
                           ? "Carregando..."
@@ -220,7 +221,7 @@ const LoginPage = () => {
 
               {isEmailVerified && (
                 <p className="mt-4 text-sm text-gray-300">
-                  Esqueceu a senha?{" "}
+                  Não lembra ou <br/>Esqueceu a senha?{" "}
                   <a
                     onClick={handleOpenModal}
                     target="_blank"

@@ -17,10 +17,10 @@ const NewUserLogin = ({ email }) => {
     e.preventDefault();
     setLoading(true);
     const userData = {
-      email: userEmail,
-      name,
-      phone,
-      password,
+      email: userEmail.trim(),
+      name: name.trim(),
+      phone: phone.trim(),
+      password: password.trim(),
     };
 
     const response = await handleRegister(userData);
@@ -57,6 +57,7 @@ const NewUserLogin = ({ email }) => {
       <div className="text-left">
         <Label htmlFor="email">Email</Label>
         <Input
+        className="mt-2 text-gray-50"
           type="email"
           id="email"
           placeholder="Digite seu email"
@@ -68,6 +69,7 @@ const NewUserLogin = ({ email }) => {
       <div className="text-left">
         <Label htmlFor="phone">Telefone</Label>
         <Input
+        className="mt-2 text-gray-50"
           type="text"
           id="phone"
           placeholder="Digite seu telefone"
@@ -79,6 +81,7 @@ const NewUserLogin = ({ email }) => {
       <div className="text-left">
         <Label htmlFor="password">Senha</Label>
         <Input
+        className="mt-2 text-gray-50"
           type="password"
           id="password"
           placeholder="Digite sua senha"
@@ -89,7 +92,7 @@ const NewUserLogin = ({ email }) => {
       </div>
       <button
         type="submit"
-        className="font-semibold flex items-center justify-center rounded transition duration-100 ease-in-out focus:outline-none  bg-brand-dark focus:ring-1 focus:ring-white text-white hover:bg-brand-dark-600 disabled:border-gray-100 disabled:bg-gray-300  px-3 py-2 text-sm group w-full focus:ring-primary-700"
+        className="font-semibold flex h-14 items-center justify-center rounded transition duration-100 ease-in-out focus:outline-none  bg-brand-dark focus:ring-1 focus:ring-white text-white hover:bg-brand-dark-600 disabled:border-gray-100 disabled:bg-primary  px-3 py-2 text-sm group w-full focus:ring-primary-700"
         disabled={loading}
       >
         {loading ? "Registrando..." : "Registrar"}
