@@ -157,7 +157,7 @@ const LoginPage = () => {
                       </Label>
                       
                       <Input
-                        className="mt-2"
+                        className="mt-2 text-gray-50"
                         id="email-login"
                         placeholder="Digite seu email aqui"
                         required
@@ -179,7 +179,7 @@ const LoginPage = () => {
                       Senha{" "}
                     </Label>
                       <Input
-                        className="mt-2"
+                        className="mt-2 text-gray-50"
                         id="password-login"
                         placeholder="Digite sua senha"
                         required
