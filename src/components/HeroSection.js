@@ -4,14 +4,15 @@ import Link from "next/link";
 import ReusableHeading from "./component/ReusableComponents/ReusableHeading";
 import ReusableParagraph from "./component/ReusableComponents/ReusableParagraph";
 
-
 const TypingEffect = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const sequence = [
-    "Seu e-mail privado e livre de spam.",
-    "Proteja sua identidade online.",
+    "Proteja-se contra spam e vazamento de dados.",
+    "Gerencie facilmente seus e-mails no dashboard.",
+    "Crie múltiplos e-mails de redirecionamento.",
+    "Identifique a origem de cada e-mail com marcações personalizadas.",
   ];
   const fullText = sequence[currentIndex];
   const [text, setText] = useState("");
@@ -48,7 +49,6 @@ const TypingEffect = () => {
 
     return () => clearInterval(interval);
   }, [currentIndex, isDeleting, fullText, text, sequence.length]);
-  
 
   return (
     <div className="my-4 h-16 text-center text-sm text-white sm:mt-10 sm:text-left sm:text-sm md:my-8 md:h-auto lg:my-12">
@@ -63,9 +63,6 @@ const TypingEffect = () => {
     </div>
   );
 };
-
-
-
 
 const HeroSection = () => {
   return (
@@ -106,15 +103,19 @@ const HeroSection = () => {
           </div>
         </div>
         <div className="mb-5  flex w-full flex-col items-center  justify-center sm:mb-10 sm:w-4/5">
-        <ReusableHeading>
-        Um novo jeito de usar e-mail
-      </ReusableHeading>
+          <ReusableHeading>EficazMail</ReusableHeading>
 
-      <ReusableParagraph>
-        A EficazMail é uma plataforma de redirecionamento de emails para
-        proteger sua privacidade online, Crie emails descartáveis e receba
-        tudo em sua caixa de entrada principal.
-      </ReusableParagraph>
+          <ReusableParagraph>
+            Proteja sua privacidade online com redirecionamento inteligente de
+            e-mails.
+          </ReusableParagraph>
+
+          <p className="text-[#C3C3C3] text-md text-center">
+            Crie e-mails personalizados que redirecionam para sua caixa de
+            entrada principal. Mantenha o controle total sobre sua comunicação
+            digital.
+          </p>
+
           <div className="flex h-20 ">
             <TypingEffect />
           </div>

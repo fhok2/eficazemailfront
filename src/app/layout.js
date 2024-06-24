@@ -7,6 +7,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Footer from "@/components/Footer";
 import AddCookierToken from '@/components/AddCookierToken';  
+import Navbar1 from '@/components/Nav';
 
 const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
 

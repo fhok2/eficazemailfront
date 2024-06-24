@@ -10,7 +10,7 @@ const PlanCard = ({
   textConditions,
 }) => {
   return (
-    <aside className="relative border gradient-border-mask mx-auto flex  sm:min-h-[580px] md:min-h-[580px] lg:min-h-[580px]  flex-col rounded-xl px-8 text-white  xl:min-h-[580px] w-[354px] py-4 bg-black">
+    <aside className="relative border gradient-border-mask mx-auto flex  sm:min-h-[580px] md:min-h-[480px] lg:min-h-[480px]  flex-col rounded-xl px-8 text-white  xl:min-h-[480px] w-[354px] py-4 bg-black">
       <div className="relative flex flex-col h-full w-full rounded-xl bg-gradient-to-br ">
         <span className="mt-4 flex flex-row items-center justify-center gap-4">
           <h2
@@ -34,20 +34,23 @@ const PlanCard = ({
             </button>
           </a>
         </div>
-        <div className="mt-6 flex flex-row items-center justify-center">
-          <div className="h-[1px] w-[30px] bg-gradient-to-br from-primary to-blue-300"></div>
-          <span className="mx-2">O que está incluso</span>
-          <div className="h-[1px] w-[30px] bg-gradient-to-br from-primary to-blue-300"></div>
-        </div>
-        <div className="mt-6 flex flex-col justify-start gap-1">
-          {features.map((feature, index) => (
-            <FeatureItem key={index} text={feature} />
-          ))}
-        </div>
-      </div>
-      <div className="mt-4 flex justify-start gap-1 font-sans text-[10px]">
+        <div className="flex flex-col justify-center items-center">
+          <div className="mt-6 flex flex-row items-center justify-center">
+            <div className="h-[1px] w-[30px] bg-gradient-to-br from-primary to-blue-300"></div>
+            <span className="mx-2">O que está incluso</span>
+            <div className="h-[1px] w-[30px] bg-gradient-to-br from-primary to-blue-300"></div>
+          </div>
+          <div className="mt-6 flex w-56 flex-col justify-center gap-1">
+            {features.map((feature, index) => (
+              <FeatureItem key={index} text={feature} />
+            ))}
+          </div>
+          <div className="mt-4 flex justify-start gap-1 font-sans text-[10px]">
         <p>{textConditions}</p>
       </div>
+        </div>
+      </div>
+      
     </aside>
   );
 };
