@@ -3,6 +3,7 @@ import { useMail } from "@/hooks/useMail";
 
 const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { activateEmailForward } = useMail();
 
   const handleModalClose = () => {
@@ -20,19 +21,22 @@ const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
         return emailItem;
       });
       localStorage.setItem(
-        "emails",
+        "emailData",
         JSON.stringify({ ...storageData, emails: updatedEmails })
       );
     }
   };
 
-  const handleDeactivate = async () => {
+  const handleActivated = async () => {
+    setIsLoading(true);
     try {
       await activateEmailForward({ email, forwardTo: redirectmail });
       updateLocalStorage();
       handleModalClose();
     } catch (error) {
       console.error("Error cancelling email forward:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -60,7 +64,7 @@ const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
             </svg>
           </div>
           <h4 className="text-lg text-gray-100 font-semibold mb-5">
-            Reativar <br/> Redirecionamento de E-mail
+            Reativar <br /> Redirecionamento de E-mail
           </h4>
           <p className="text-gray-300 font-medium">
             Você está prestes a reativar o redirecionamento do e-mail{" "}
@@ -77,10 +81,39 @@ const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
             Cancelar
           </button>
           <button
-            onClick={handleDeactivate}
-            className="inline-block w-full sm:w-auto py-3 px-5 mb-2 text-center font-semibold leading-6 text-blue-50 bg-teal-700 hover:bg-teal-600 rounded-lg transition duration-200"
+            onClick={handleActivated}
+            disabled={isLoading}
+            className={`inline-block w-full sm:w-auto py-3 px-5 mb-2 text-center font-semibold leading-6 text-blue-50 ${
+              isLoading
+                ? "bg-teal-500 cursor-not-allowed"
+                : "bg-teal-700 hover:bg-teal-600"
+            } rounded-lg transition duration-200`}
           >
-            Reativar
+            {isLoading ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Reativando...
+              </span>
+            ) : (
+              "Reativar"
+            )}
           </button>
         </div>
       </div>

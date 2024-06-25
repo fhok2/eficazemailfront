@@ -157,13 +157,16 @@ export const useAuth = () => {
       const decodedToken = jwtDecode(token);
       const expiresIn = decodedToken.exp - (Date.now() / 1000);
       const refreshBuffer = 60; // 60 segundos antes da expiração
-
+  
       if (expiresIn > refreshBuffer) {
-        const refreshTimer = setTimeout(() => {
-          
-          refreshAuthToken();
+        const refreshTimer = setTimeout(async () => {
+          const refreshed = await refreshAuthToken();
+          if (refreshed) {
+            // Token refreshed successfully, update the state
+            setToken(localStorage.getItem('accessToken'));
+          }
         }, (expiresIn - refreshBuffer) * 1000);
-
+  
         return () => clearTimeout(refreshTimer);
       }
     }

@@ -1,9 +1,8 @@
-// page.js
+
 import React from 'react';
 import HeroSection from '@/components/HeroSection';
 import PricingSection from '@/components/PricingSection';
 import EmailForwardingForm from '@/components/EmailForwardingForm';
-import HeroSection1 from '@/components/HeroSectin1';
 import EficazMailFeatures from '@/components/Features';
 
 

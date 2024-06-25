@@ -242,7 +242,7 @@ const EmailTable = ({ isLoading, loadEmails }) => {
                                 <line x1="9" y1="9" x2="15" y2="15" />
                                 <line x1="15" y1="9" x2="9" y2="15" />
                               </svg>
-                              <span className="text-xs">Cancelar</span>
+                              <span className="text-xs">Desativar</span>
                             </button>
                           )}
                           <button
@@ -399,7 +399,7 @@ const EmailTable = ({ isLoading, loadEmails }) => {
                                 <line x1="9" y1="9" x2="15" y2="15" />
                                 <line x1="15" y1="9" x2="9" y2="15" />
                               </svg>
-                              <span className="text-[9px]">Cancelar</span>
+                              <span className="text-[9px]">Desativar</span>
                             </button>
                           )}
                           <button

@@ -1,19 +1,41 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
 
-const baseURL = 'https://emailpix.up.railway.app/api';
-// const baseURL = "http://localhost:3005/api";
+// const baseURL = 'https://emailpix.up.railway.app/api';
+const baseURL = "http://localhost:3005/api";
 
 // Configurar uma instância do Axios
 const axiosInstance = axios.create({
   baseURL,
   withCredentials: true,
-  timeout: 10000, // Tempo limite de 10 segundos
+  timeout: 10000,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-CSRF-Token'
 });
 
-// Função para obter o token CSRF
+
 const getCsrfToken = async () => {
-  const { data } = await axiosInstance.get("/csrf/get-csrf-token");
-  return data.csrfToken;
+  try {
+    let token = Cookies.get('XSRF-TOKEN');
+   
+    if (!token) {
+      
+      const response = await axiosInstance.get("/csrf/get-csrf-token");
+      token = response.data.csrfToken;
+      
+      
+      if (token) {
+        Cookies.set('XSRF-TOKEN', token, { secure: process.env.NODE_ENV === 'production' });
+      } else {
+        console.error('No CSRF token received from server');
+      }
+    }
+    
+    return token;
+  } catch (error) {
+    console.error('Error fetching CSRF token:', error);
+    return null;
+  }
 };
 
 const getAuthorizationToken = async () => {
