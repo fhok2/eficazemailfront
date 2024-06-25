@@ -44,10 +44,10 @@ export default function Dashboard() {
       }
     };
 
-    window.addEventListener('emailDataUpdated', handleEmailDataUpdate);
+    window.addEventListener("emailDataUpdated", handleEmailDataUpdate);
 
     return () => {
-      window.removeEventListener('emailDataUpdated', handleEmailDataUpdate);
+      window.removeEventListener("emailDataUpdated", handleEmailDataUpdate);
     };
   }, []);
 
@@ -70,7 +70,7 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Failed to fetch emails:", error);
       }
-      setIsLoading(false);
+      setIsLoading(false);  // Set to false after data is loaded
     }
   };
 
@@ -117,8 +117,8 @@ export default function Dashboard() {
         </div>
         <div className="bg-white rounded-lg p-4 shadow-md my-4">
           {isLoading ? (
-            <div className="flex justify-center items-center">
-              <p>Loading...</p>
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-brand-dark-600"></div>
             </div>
           ) : (
             <EmailTable

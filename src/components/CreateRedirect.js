@@ -144,7 +144,7 @@ export default function CreateRedirect({ email: initialEmail }) {
                     }
                     disabled={generateRandomName}
                   />
-                  <p className="px-4 text-base text-coolGray-500 font-normal">
+                  <p className="px-1 text-xs text-coolGray-500 font-normal">
                     @eficaz.email
                   </p>
                 </div>
