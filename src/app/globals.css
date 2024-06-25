@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --black: #000000;
+  --ash-black: #222;
+  --white: #fafafa;
+  --sky: #00ccff;
+  --green: #22dddd;
+  --blue: #1300ff;
+  --dusk: #6600ff;
+  --purple: #9900ff;
+  --pink: #ff0066;
+  --red: #fe0222;
+  --orange: #fd7702;
+  --yellow: #ffbb00;
+  --green: #048374;
+
+  --background: var(--white);
+  --accent: var(--green);
+}
+
+.text-background {
+  color: var(--background);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+.fill-background {
+  fill: var(--background);
+}
 
 body {
   @apply bg-custom-bg text-white; /* Aplica a cor de fundo e define a cor do texto como branca */

@@ -52,6 +52,8 @@ module.exports = {
         "brand-dark-900": "rgb(4 157 142 / 90%)",
         "brand-light": "rgb(4 157 142)",
         "brand-light-600": "rgb(4 157 142 / 60%)",
+        background: 'var(--background)',
+        accent: 'var(--accent)',
       },
       animation: {
         slide: "slide 10s linear infinite",

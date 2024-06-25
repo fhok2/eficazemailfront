@@ -4,6 +4,7 @@ import HeroSection from '@/components/HeroSection';
 import PricingSection from '@/components/PricingSection';
 import EmailForwardingForm from '@/components/EmailForwardingForm';
 import HeroSection1 from '@/components/HeroSectin1';
+import EficazMailFeatures from '@/components/Features';
 
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
         <main>
           <div></div>
           <HeroSection />
+          <EficazMailFeatures />
           <PricingSection />
           <div id="testefree" >
         

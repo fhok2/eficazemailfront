@@ -67,7 +67,7 @@ const TypingEffect = () => {
 const HeroSection = () => {
   return (
     <div
-      className="relative mt-16 mb-8 flex w-full max-w-5xl flex-col items-center px-4 py-10 mx-auto xl:max-w-6xl 2xl:justify-center"
+      className="relative mt-16 flex w-full max-w-5xl flex-col items-center px-4 py-10 mx-auto xl:max-w-6xl 2xl:justify-center"
       aria-label="section-container-standard"
     >
       <div className=" flex flex-col items-center justify-center pb-2 2xl:mb-24 2xl:h-fit">
@@ -105,12 +105,11 @@ const HeroSection = () => {
         <div className="mb-5  flex w-full flex-col items-center  justify-center sm:mb-10 sm:w-4/5">
           <ReusableHeading>EficazMail</ReusableHeading>
 
-          <ReusableParagraph>
-            Proteja sua privacidade online com redirecionamento inteligente de
-            e-mails.
-          </ReusableParagraph>
+       
 
-          <p className="text-[#C3C3C3] text-md text-center">
+          <p className="text-lg text-gray-300  leading-relaxed text-center">
+          Proteja sua privacidade online com redirecionamento inteligente de
+          e-mails.
             Crie e-mails personalizados que redirecionam para sua caixa de
             entrada principal. Mantenha o controle total sobre sua comunicação
             digital.
