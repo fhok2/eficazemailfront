@@ -1,8 +1,8 @@
 import axios from "axios";
 import Cookies from 'js-cookie';
 
-// const baseURL = 'https://emailpix.up.railway.app/api';
-const baseURL = "http://localhost:3005/api";
+const baseURL = 'https://emailpix.up.railway.app/api';
+// const baseURL = "http://localhost:3005/api";
 
 // Configurar uma instância do Axios
 const axiosInstance = axios.create({

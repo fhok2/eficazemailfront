@@ -1,10 +1,10 @@
-// const baseURL = 'https://emailpix.up.railway.app/api';
 // hooks/useCsrfToken.js
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const baseURL = 'http://localhost:3005/api';
+const baseURL = 'https://emailpix.up.railway.app/api';
+// const baseURL = 'http://localhost:3005/api';
 
 export const useCsrfToken = () => {
   const [csrfToken, setCsrfToken] = useState('');
