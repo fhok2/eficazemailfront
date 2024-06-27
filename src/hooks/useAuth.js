@@ -28,7 +28,7 @@ export const useAuth = () => {
       const currentTime = Date.now() / 1000;
       return decodedToken.exp > currentTime;
     } catch (error) {
-      console.error('Error decoding token:', error);
+    
       return false;
     }
   }, []);
@@ -67,7 +67,7 @@ export const useAuth = () => {
           return true;
         }
       } catch (error) {
-        console.error('Failed to refresh token', error);
+       
         handleLogout();
         return false;
       } finally {
@@ -83,16 +83,26 @@ export const useAuth = () => {
     if (typeof window === 'undefined') return;
   
     const storedToken = localStorage.getItem('accessToken');
-    if (!storedToken || !validateToken(storedToken)) {
-      const refreshed = await refreshAuthToken();
-      if (!refreshed) {
-        localStorage.removeItem('accessToken');
-        router.push('/login');
-        return;
+    
+    if (storedToken) {
+      if (validateToken(storedToken)) {
+        // Token válido, apenas atualize o estado
+        setToken(storedToken);
+      } else {
+        // Token expirado, tente refresh
+        const refreshed = await refreshAuthToken();
+        if (!refreshed) {
+          localStorage.removeItem('accessToken');
+          router.push('/login');
+          return;
+        }
       }
+    } else {
+      // Não há token, não tente refresh
+      router.push('/login');
+      return;
     }
   
-    setToken(localStorage.getItem('accessToken'));
     setAuthChecked(true);
   }, [router, validateToken, refreshAuthToken]);
 
@@ -134,6 +144,7 @@ export const useAuth = () => {
   const handleCheckEmail = async (email) => {
     try {
       const response = await checkEmail(email);
+    
       if (response.code === 200) {
         return { error: false };
       } else {
