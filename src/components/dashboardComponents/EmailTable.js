@@ -27,10 +27,10 @@ const EmailTable = ({ isLoading, loadEmails }) => {
     };
 
     updateEmails();
-    window.addEventListener('emailDataUpdated', updateEmails);
-    
+    window.addEventListener("emailDataUpdated", updateEmails);
+
     return () => {
-      window.removeEventListener('emailDataUpdated', updateEmails);
+      window.removeEventListener("emailDataUpdated", updateEmails);
     };
   }, []);
 
@@ -349,7 +349,13 @@ const EmailTable = ({ isLoading, loadEmails }) => {
                               : "text-red-900 bg-red-200"
                           }`}
                         >
-                          {email.status === "active" ? "Ativo" : "Inativo"}
+                          {email.status === "active"
+                            ? "Ativo"
+                            : email.status === "inactive"
+                            ? "Inativo"
+                            : email.status === "deleted"
+                            ? "Deletado"
+                            : undefined}
                         </span>
                         <div className="flex space-x-2 justify-center">
                           {email.status === "inactive" && (

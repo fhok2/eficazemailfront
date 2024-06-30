@@ -142,17 +142,13 @@ export const useAuth = () => {
   };
 
   const handleCheckEmail = async (email) => {
-    try {
-      const response = await checkEmail(email);
-    
+    const response = await checkEmail(email);
+      console.log(response)
       if (response.code === 200) {
         return { error: false };
       } else {
-        return { error: true, message: 'E-mail não registrado.' };
+        return { error: true, message: response.message || 'E-mail não registrado.' };
       }
-    } catch (error) {
-      return { error: true, message: error.response ? error.response.data.message : 'An unexpected error occurred' };
-    }
   };
 
   const handleLogout = () => {

@@ -72,7 +72,7 @@ const activateForward = async (dataMail) => {
 
 const fetchUserEmails = async (page = 1, limit = 10) => {
   return csrfProtectedApiCall(async () => {
-    const response = await api.get(`/emails/listaremailusuario?page=${page}&limit=${limit}`);
+    const response = await api.get(`/user/listaremailusuario?page=${page}&limit=${limit}`);
     return response.data;
   });
 };

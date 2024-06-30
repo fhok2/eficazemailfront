@@ -40,7 +40,8 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     const response = await handleCheckEmail(email);
-
+  
+  
     if (response.error) {
       if (response.message === "E-mail não registrado.") {
         setIsNotRegistered(true);
@@ -57,6 +58,7 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log('Submitting form');
     e.preventDefault();
     setLoading(true);
     const credentials = {
