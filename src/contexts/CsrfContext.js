@@ -8,7 +8,7 @@ export const useCsrfToken = () => {
   return useContext(CsrfContext);
 };
 
-const baseURL = "http://localhost:3005/api"; 
+const baseURL = "https://emailpix.up.railway.app/api"; 
 
 export const CsrfProvider = ({ children }) => {
   const getInitialCsrfToken = () => {
