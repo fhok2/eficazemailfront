@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import CreateRedirect from "../CreateRedirect";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/contexts/AuthContext";
-import LogoutButton from "./LogoutBUtton"; 
+import LogoutButton from './NewLogoutButton';
 const SidebarItem = ({ icon: Icon, text, href, className, onClick, isLoading, isActive, isCollapsed }) => (
   <TooltipProvider>
     <Tooltip>
