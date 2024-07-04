@@ -72,6 +72,7 @@ export const useMail = () => {
     }
   }
   const updateEmailForward = async (dataMail) => {
+    console.log(dataMail)
     
     try {
       setLoading(true);
@@ -79,7 +80,7 @@ export const useMail = () => {
       
       setUserEmails((prevEmails) => [...prevEmails, dataMail]);
     } catch (err) {
-      
+      console.log(err)
       setError(err);
     } finally {
       setLoading(false);

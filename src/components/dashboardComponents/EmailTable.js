@@ -10,7 +10,7 @@ const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate }
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">{email.address}</h3>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{email.address}</h3>
           <motion.button
   whileHover={{ scale: 1.1 }}
   whileTap={{ scale: 0.9 }}
@@ -56,29 +56,12 @@ const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate }
   );
 };
 
-const EmailList = ({ isLoading, loadEmails }) => {
-  const [emails, setEmails] = useState([]);
+const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
   const [copied, setCopied] = useState(null);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState(null);
-
-  useEffect(() => {
-    const updateEmails = () => {
-      const storedEmails = JSON.parse(localStorage.getItem("emailData"));
-      if (storedEmails) {
-        setEmails(storedEmails.emails);
-      }
-    };
-
-    updateEmails();
-    window.addEventListener("emailDataUpdated", updateEmails);
-
-    return () => {
-      window.removeEventListener("emailDataUpdated", updateEmails);
-    };
-  }, []);
 
   const handleCopyEmail = (email) => {
     navigator.clipboard.writeText(email).then(() => {
@@ -110,43 +93,50 @@ const EmailList = ({ isLoading, loadEmails }) => {
     loadEmails();
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!emails || emails.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-600 dark:text-gray-400">No emails found.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Seus Emails</h2>
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {emails.map((email) => (
-            <EmailCard
-              key={email.address}
-              email={email}
-              onCopy={handleCopyEmail}
-              copied={copied}
-              onActivate={handleOpenActivateModal}
-              onDeactivate={handleOpenDeactivateModal}
-              onUpdate={handleOpenUpdateModal}
-            />
-          ))}
-        </div>
-      )}
-      {isDeactivateModalOpen && (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {emails.map((email) => (
+        <EmailCard
+          key={email.address}
+          email={email}
+          onCopy={handleCopyEmail}
+          copied={copied}
+          onActivate={handleOpenActivateModal}
+          onDeactivate={handleOpenDeactivateModal}
+          onUpdate={handleOpenUpdateModal}
+        />
+      ))}
+      {isDeactivateModalOpen && selectedEmail && (
         <DeactivateAccountModal
           redirectmail={selectedEmail.forwarding}
           email={selectedEmail.address}
           onClose={handleCloseModals}
         />
       )}
-      {isActivateModalOpen && (
+      {isActivateModalOpen && selectedEmail && (
         <AccountActivatedModal
           redirectmail={selectedEmail.forwarding}
           email={selectedEmail.address}
           onClose={handleCloseModals}
         />
       )}
-      {isUpdateModalOpen && (
+      {isUpdateModalOpen && selectedEmail && (
         <UpdateEmailDataModal
           redirectmail={selectedEmail.forwarding}
           email={selectedEmail.address}
@@ -158,4 +148,4 @@ const EmailList = ({ isLoading, loadEmails }) => {
   );
 };
 
-export default EmailList;
+export default EmailTable;

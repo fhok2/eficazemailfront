@@ -51,7 +51,8 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
 
   const updateLocalStorage = () => {
     const storageData = JSON.parse(localStorage.getItem("emailData"));
-    if (storageData) {
+    console.log(storageData);
+    if (storageData && storageData.emails) {
       const updatedEmails = storageData.emails.map((emailItem) => {
         if (emailItem.address === email) {
           return {
@@ -99,27 +100,27 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
     >
       <animated.div
         style={modalSpring}
-        className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-2xl"
+        className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6 relative overflow-hidden">
+        <div className="p-6 relative overflow-y-auto flex-grow">
           <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/10 to-brand-light/10 animate-pulse"></div>
           <animated.div
             style={iconSpring}
-            className="flex items-center justify-center w-20 h-20 mb-6 bg-gray-700 rounded-full mx-auto relative z-10"
+            className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-700 rounded-full mx-auto relative z-10"
           >
-            <Edit2 className="h-10 w-10 text-brand-light" />
+            <Edit2 className="h-8 w-8 text-brand-light" />
           </animated.div>
-          <h4 className="text-3xl text-white font-bold mb-4 text-center relative z-10">
+          <h4 className="text-2xl text-white font-bold mb-3 text-center relative z-10">
             Atualizar dados de redirecionamento
           </h4>
-          <p className="text-gray-300 mb-6 text-center relative z-10">
+          <p className="text-gray-300 mb-4 text-center text-sm relative z-10">
             Você está prestes a atualizar os dados de redirecionamento do e-mail{" "}
             <span className="font-semibold text-brand-light">{email}</span>.
             Esta ação não é permanente e pode ser revertida a qualquer momento.
           </p>
-          <animated.form style={formSpring} className="space-y-6 relative z-10">
-            <div className="space-y-2">
+          <animated.form style={formSpring} className="space-y-4 relative z-10">
+            <div className="space-y-1">
               <Label htmlFor="email" className="text-sm font-medium text-gray-300">
                 Email
               </Label>
@@ -131,7 +132,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
                 className="bg-gray-700 text-white border-gray-600 focus:border-brand-light"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="redirectMail" className="text-sm font-medium text-gray-300 flex items-center">
                 Encaminha para: <Mail className="h-4 w-4 ml-1 text-brand-light" />
               </Label>
@@ -143,7 +144,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
                 className="bg-gray-700 text-white border-gray-600 focus:border-brand-light"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="emailPurpose" className="text-sm font-medium text-gray-300 flex items-center">
                 Finalidade <Edit2 className="h-4 w-4 ml-1 text-brand-light" />
               </Label>
@@ -157,7 +158,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
             </div>
           </animated.form>
         </div>
-        <div className="px-6 py-4 bg-gray-700 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 relative z-10">
+        <div className="px-6 py-4 bg-gray-700 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 relative z-10">
           <Button
             onClick={handleModalClose}
             variant="secondary"

@@ -1,16 +1,18 @@
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { X, Check, AlertCircle, Copy, Info } from 'lucide-react';
+import { useSpring, animated, config } from 'react-spring';
 
 export default function Modal({ open, onClose, type, message, email }) {
   const [isClient, setIsClient] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    setIsVisible(open);
+  }, [open]);
 
   useEffect(() => {
     setCopied(false);
@@ -20,6 +22,7 @@ export default function Modal({ open, onClose, type, message, email }) {
     if (navigator?.clipboard?.writeText) {
       navigator.clipboard.writeText(email).then(() => {
         setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
       }).catch(err => {
         console.error('Falha ao copiar email: ', err);
       });
@@ -28,121 +31,76 @@ export default function Modal({ open, onClose, type, message, email }) {
     }
   };
 
+  const backdropSpring = useSpring({
+    opacity: isVisible ? 1 : 0,
+    config: config.molasses,
+  });
+
+  const modalSpring = useSpring({
+    transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(-50px)',
+    opacity: isVisible ? 1 : 0,
+    config: { ...config.wobbly, tension: 300, friction: 20 },
+  });
+
+  const iconSpring = useSpring({
+    from: { transform: 'scale(0) rotate(-180deg)' },
+    to: { transform: 'scale(1) rotate(0deg)' },
+    delay: 300,
+    config: { ...config.wobbly, tension: 300, friction: 10 },
+  });
+
   if (!isClient) {
     return null;
   }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[425px]">
-        <DialogHeader >
-          <DialogTitle className={`text-center    ${type === "success" ? "text-green-500" : "text-red-500"}`}>
-            {type === "success" ? "E-mail redirecionamento criado com sucesso" : "Ocorreu um erro"}
-          </DialogTitle>
-          <DialogClose>
-            <X 
-              onClick={onClose}
-              className="h-4 w-4 bg-gray-300 rounded-sm -mr-3 absolute right-4 top-1 opacity-80 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer"
-            />
-          </DialogClose>
-        </DialogHeader>
-        <div className="grid gap-4 py-6 text-gray-900">
-          <div className="flex items-center justify-center">
-            {type === "success" ? (
-              <CircleCheckIcon className="h-16 w-16 text-green-500" />
-            ) : (
-              <ErrorIcon className="h-16 w-16 text-red-500" />
-            )}
-          </div>
-          <div className="text-center">
-  <p className="text-[12px] font-medium">{type === "success" ? "Seu endereço de e-mail é:" : ""}</p>
-  <p className="text-sm font-bold mt-3 overflow-wrap break-word word-break break-all">{type === "success" ? email : message}</p>
-</div>
-        </div>
-        <DialogFooter>
-          {type === "success" && (
-            <div className="flex flex-col">
-              <Button variant="outline" className="w-11/12 outline-none" onClick={handleCopyEmail}>
-                <CopyIcon className="mr-2 h-4 w-4" />
-                {copied ? "Email copiado" : "Copiar Email"}
-              </Button>
-
+      <DialogContent className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-2xl p-0">
+        <animated.div style={modalSpring} className="relative">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className={`text-center text-2xl font-bold ${type === "success" ? "text-green-500" : "text-red-500"}`}>
+              {type === "success" ? "E-mail redirecionamento criado com sucesso" : "Ocorreu um erro"}
+            </DialogTitle>
+            <DialogClose className="absolute right-4 top-4">
+              <X 
+                onClick={onClose}
+                className="h-4 w-4 text-gray-400 hover:text-white transition-colors cursor-pointer"
+              />
+            </DialogClose>
+          </DialogHeader>
+          <div className="grid gap-4 p-6 text-gray-300">
+            <animated.div style={iconSpring} className="flex items-center justify-center">
               {type === "success" ? (
-              <p className=" flex text-xs mt-2 text-gray-600">
-                
-              <span className="text-red-500 mr-1 "><InfoCircledIcon/></span> Verifique sempre a caixa de spam, promoção, social ou lixeira quando usar o e-mail acima informado.
-            </p>
-            ) : (
-              ''
-            )}
-              
+                <Check className="h-16 w-16 text-green-500" />
+              ) : (
+                <AlertCircle className="h-16 w-16 text-red-500" />
+              )}
+            </animated.div>
+            <div className="text-center">
+              <p className="text-sm font-medium">{type === "success" ? "Seu endereço de e-mail é:" : ""}</p>
+              <p className="text-lg font-bold mt-2 break-all">{type === "success" ? email : message}</p>
             </div>
-          )}
-        </DialogFooter>
+          </div>
+          <DialogFooter className="p-6 pt-0">
+            {type === "success" && (
+              <div className="w-full space-y-4">
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-300"
+                  onClick={handleCopyEmail}
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  {copied ? "Email copiado" : "Copiar Email"}
+                </Button>
+                <div className="flex items-start text-xs text-gray-400">
+                  <Info className="h-4 w-4 mr-2 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <span>Verifique sempre a caixa de spam, promoção, social ou lixeira quando usar o e-mail acima informado.</span>
+                </div>
+              </div>
+            )}
+          </DialogFooter>
+        </animated.div>
       </DialogContent>
     </Dialog>
   );
 }
-
-function CircleCheckIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  );
-}
-
-function ErrorIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-  );
-}
-
-function CopyIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-    </svg>
-  );
-}
-
-

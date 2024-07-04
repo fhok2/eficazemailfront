@@ -1,198 +1,150 @@
-"use client";
-
-import { useState, useCallback } from "react";
-import { Button } from "./ui/button";
+'use client'
+import React, { useState } from "react";
+import { useSpring, animated, config } from "react-spring";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { ArrowRight, Lock } from 'lucide-react';
+import AnimatedBackground from "@/components/AnimatedBackground";
 import { useRouter } from "next/navigation";
-import { resetPassword } from "@/services/authService";
-import { motion, AnimatePresence } from "framer-motion";
 
-const SucessoMessage = () => {
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ x: 100, opacity: 0 }} // Inicia da direita
-        animate={{ x: 50, opacity: 1 }} // Anima para o centro
-        exit={{
-          x: -100, // Sai para a esquerda
-          opacity: 0,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 15,
-          duration: 0.5,
-        }}
-        className="fixed top-14 right-8 z-50"
-      >
-        <div className="px-6 py-5 bg-gray-50 rounded-3xl opacity-50">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="w-auto">
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 28 28"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width="28" height="28" rx="14" fill="#24B428"></rect>
-                <path
-                  d="M11.8746 18.3313C11.534 18.3315 11.2073 18.1961 10.9666 17.955L8.22153 15.2109C7.92616 14.9155 7.92616 14.4365 8.22153 14.141C8.517 13.8457 8.99595 13.8457 9.29142 14.141L11.8746 16.7242L18.7086 9.89023C19.004 9.59486 19.483 9.59486 19.7785 9.89023C20.0738 10.1857 20.0738 10.6647 19.7785 10.9601L12.7826 17.955C12.5419 18.1961 12.2152 18.3315 11.8746 18.3313Z"
-                  fill="white"
-                ></path>
-              </svg>
-            </div>
-            <p className="flex-1 text-xs font-medium text-gray-700">
-              Senha atualizada com sucesso.
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
-const ErrorMessage = ({message}) => {
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ x: 100, opacity: 0 }} // Inicia da direita
-        animate={{ x: 50, opacity: 1 }} // Anima para o centro
-        exit={{
-          x: -100, // Sai para a esquerda
-          opacity: 0,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 15,
-          duration: 0.5,
-        }}
-        className="fixed top-14 right-8 z-50"
-      >
-        <div className="px-6 py-5 bg-gray-50 rounded-3xl opacity-50">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="w-auto">
-              <svg
-                class="h-8 w-8 text-red-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <p className="flex-1 text-xs font-medium text-gray-700">
-              {message}
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
+const PasswordReset = ({ token }) => {
+  const [formData, setFormData] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const [success, setSuccess] = useState(false);
 
-export default function ResetPasswordForm({ token }) {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [sucesso, setSucesso] = useState(false);
-  const [erro, setErro] = useState(false);
-  const[serverMessage, setServerMessage] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { resetPassword } = useAuthContext();
   const router = useRouter();
 
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setMessage("");
-      setErro(false);
+  const fadeIn = useSpring({
+    from: { opacity: 0, transform: 'translateY(20px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+    config: config.gentle,
+  });
 
-      if (password.length < 8) {
-        setMessage("A senha deve ter pelo menos 8 caracteres.");
-        return;
-      }
+  const buttonAnimation = useSpring({
+    from: { scale: 1, boxShadow: '0 0 0 rgba(4, 157, 142, 0)' },
+    to: { scale: 1.02, boxShadow: '0 4px 20px rgba(4, 157, 142, 0.3)' },
+    config: { tension: 300, friction: 10 },
+  });
 
-      if (password !== confirmPassword) {
-        setMessage("As senhas não coincidem.");
-        return;
-      }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    const trimmedValue = value.trim();
+    setFormData(prev => ({ ...prev, [name]: trimmedValue }));
+    setError("");
+  };
 
-      setIsSubmitting(true);
-      const response = await resetPassword(token, password);
-      setIsSubmitting(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
+    if (formData.password.length < 8) {
+      setError("A senha deve ter pelo menos 8 caracteres.");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("As senhas não coincidem.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await resetPassword(token, formData.password);
       if (response.error) {
-        setErro(true);
-        setServerMessage(response.message)
+        setError(response.message);
       } else {
-        setSucesso(true);
-        setPassword("");
-        setConfirmPassword("");
+        setSuccess(true);
         setTimeout(() => router.push("/login"), 3000);
       }
-    },
-    [password, confirmPassword, token, resetPassword, router]
+    } catch (error) {
+      setError("Ocorreu um erro ao redefinir a senha. Tente novamente.");
+    }
+    
+    setLoading(false);
+  };
+
+  const renderFormField = (field, type = "password") => (
+    <div key={field} className="form-group relative">
+      <Label 
+        className={`absolute left-10 text-sm font-semibold transition-all duration-300 ${
+          focusedField === field || formData[field]
+            ? 'top-1 text-xs text-teal-300'
+            : 'top-1/2 -translate-y-1/2 text-gray-400'
+        }`}
+        htmlFor={field}
+      >
+        {field === "password" ? "Nova senha" : "Confirmar senha"}
+      </Label>
+      <div className="relative">
+        <Input
+          type={type}
+          id={field}
+          name={field}
+          value={formData[field]}
+          onChange={handleInputChange}
+          onFocus={() => setFocusedField(field)}
+          onBlur={() => setFocusedField(null)}
+          required
+          className="mt-1 bg-gray-800 bg-opacity-50 text-white border-gray-700 rounded-lg py-8 pl-12 w-full focus:ring-2 focus:ring-brand-light transition-all duration-300 placeholder-transparent"
+        />
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <Lock size={18} />
+        </span>
+      </div>
+    </div>
   );
 
   return (
-    <section className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {message && <p className="text-red-500">{message}</p>}
-        {sucesso && <SucessoMessage />}
-        {erro && (
-          <ErrorMessage message={serverMessage} />
-        )}
-        <div className="relative w-full h-14 mt-10 py-4 px-3 mb-10 border border-gray-400 focus-within:border-primary rounded-lg">
-          <span className="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-custom-bg">
-            Nova senha
-          </span>
-          <input
-            className="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium "
-            id="modalInput7-1"
-            type="password"
-            value={password}
-            required
-            placeholder="Digite sua nova senha aqui"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setMessage("");
-            }}
-          />
-        </div>
-        <div className="relative  w-full h-14 mt-10 py-4 px-3 mb-10 border border-gray-400 focus-within:border-primary rounded-lg">
-          <span className="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-custom-bg">
-            Confirmar senha
-          </span>
-          <input
-            className="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium "
-            id="modalInput7-1"
-            type="password"
-            value={confirmPassword}
-            required
-            placeholder="Digite sua nova senha aqui"
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              setMessage("");
-            }}
-          />
-          
-        </div>
-       
-        <div>
-          <Button
-            variant="link2"
-            className="w-full mt-10 sm:w-auto py-6 px-5 text-center font-semibold leading-6 text-blue-50 rounded-lg transition duration-200 mx-auto flex"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Processando..." : "Criar nova senha"}
-          </Button>
-        </div>
-      </form>
-      
-    </section>
+    <>
+      <AnimatedBackground />
+      <div className="min-h-screen flex flex-col justify-center items-center px-4 py-20 bg-transparent text-white relative z-10">
+        <animated.div className="w-full max-w-md" style={fadeIn}>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
+              Redefinir Senha
+            </span>
+          </h1>
+          <p className="text-xl text-gray-300 text-center mb-8">
+            Digite sua nova senha abaixo
+          </p>
+          {error && (
+            <animated.div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert" style={fadeIn}>
+              <p>{error}</p>
+            </animated.div>
+          )}
+          {success && (
+            <animated.div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6" role="alert" style={fadeIn}>
+              <p>Senha redefinida com sucesso! Redirecionando para o login...</p>
+            </animated.div>
+          )}
+          <animated.form onSubmit={handleSubmit} className="space-y-6 mt-8" style={fadeIn}>
+            {renderFormField("password")}
+            {renderFormField("confirmPassword")}
+            <animated.div style={buttonAnimation}>
+              <Button 
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-teal-400 to-brand-light text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center"
+              >
+                {loading ? "Processando..." : "Criar nova senha"}
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </animated.div>
+          </animated.form>
+        </animated.div>
+      </div>
+    </>
   );
-}
+};
+
+export default PasswordReset;

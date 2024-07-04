@@ -38,8 +38,8 @@ const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
   };
 
   const updateLocalStorage = () => {
-    const storageData = JSON.parse(localStorage.getItem("emailData"));
-    if (storageData) {
+    const storageData = JSON.parse(localStorage.getItem("emailData")) || { emails: [] };
+    if (storageData.emails) {
       const updatedEmails = storageData.emails.map((emailItem) => {
         if (emailItem.address === email) {
           return { ...emailItem, status: "inactive" };
