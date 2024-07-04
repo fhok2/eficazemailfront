@@ -31,12 +31,14 @@ const UserRegistration = ({ email, onBackToLogin }) => {
   });
 
   useEffect(() => {
-    setFormData(prev => ({ ...prev, email }));
+    setFormData(prev => ({ ...prev, email: email ? email.trim() : "" }));
   }, [email]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const trimmedValue = value.trim();
+    const finalValue = name === 'email' ? trimmedValue.toLowerCase() : trimmedValue;
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
     setError("");
   };
 
@@ -100,9 +102,9 @@ const UserRegistration = ({ email, onBackToLogin }) => {
                 onFocus={() => setFocusedField(field)}
                 onBlur={() => setFocusedField(null)}
                 required
-                className="mt-1  bg-gray-800 bg-opacity-50 text-white border-gray-700 rounded-lg py-8 pl-12   w-full focus:ring-2 focus:ring-brand-light transition-all duration-300 placeholder-transparent"
+                className="mt-1 bg-gray-800 bg-opacity-50 text-white border-gray-700 rounded-lg py-8 pl-12 w-full focus:ring-2 focus:ring-brand-light transition-all duration-300 placeholder-transparent"
               />
-              <span className="absolute left-3  top-1/2 -translate-y-1/2 text-gray-400">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 {getIcon(field)}
               </span>
             </div>

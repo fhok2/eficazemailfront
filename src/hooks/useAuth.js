@@ -129,6 +129,7 @@ export const useAuth = () => {
   }, [authChecked, checkAuth]);
 
   const handleLogin = async (credentials) => {
+    
     const response = await loginService(credentials);
    
     if (response.error) {
@@ -145,8 +146,9 @@ export const useAuth = () => {
   };
 
   const handleCheckEmail = async (email) => {
-    const response = await checkEmail(email);
-      console.log(response)
+    const removeSpace = email.replace(/\s/g, '');
+    const response = await checkEmail(removeSpace);
+  
       if (response.code === 200) {
         return { error: false };
       } else {

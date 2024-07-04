@@ -65,6 +65,7 @@ export const getDashboardData = () => {
 };
 
 export const checkEmail = (email) =>
+  
   apiCall('post', '/user/check-email', { email });
 
 export const requestPasswordReset = (email, baseUrl) =>

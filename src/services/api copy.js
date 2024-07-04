@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
       console.warn('Access token expired. Attempting to refresh...');
       const refreshed = await refreshToken();
       if (refreshed) {
-        console.log('Refreshed:', refreshed);
+       
         return axiosInstance(error.config);
       }
     }
@@ -77,7 +77,7 @@ async function refreshToken() {
 
 const api = ["get", "post", "put", "delete"].reduce((acc, method) => {
   acc[method] = (url, data, options = {}) =>
-    console.log('API Request:', method, url,options,data) ||
+
     axiosInstance({
       url,
       method,

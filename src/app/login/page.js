@@ -43,7 +43,8 @@ const LoginPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value.toLowerCase() }));
+    const trimmedValue = name === 'email' ? value.trim().toLowerCase() : value.toLowerCase();
+    setFormData(prev => ({ ...prev, [name]: trimmedValue }));
     setError("");
     if (name === "email") setIsEmailVerified(false);
   };
