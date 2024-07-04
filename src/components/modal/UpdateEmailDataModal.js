@@ -1,22 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { useMail } from "@/hooks/useMail";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Edit2, Mail } from 'lucide-react';
+import { useSpring, animated, config } from 'react-spring';
 
 const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [redirectMail, setRedirectMail] = useState(redirectmail);
   const [emailPurpose, setEmailPurpose] = useState(purpose);
   const { updateEmailForward } = useMail();
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    onClose();
-  };
-
   useEffect(() => {
+    setIsVisible(true);
     setRedirectMail(redirectmail);
     setEmailPurpose(purpose);
   }, [redirectmail, purpose]);
+
+  const backdropSpring = useSpring({
+    opacity: isVisible ? 1 : 0,
+    config: config.molasses,
+  });
+
+  const modalSpring = useSpring({
+    transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(-50px)',
+    opacity: isVisible ? 1 : 0,
+    config: { ...config.wobbly, tension: 300, friction: 20 },
+  });
+
+  const formSpring = useSpring({
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+    delay: 200,
+    config: config.gentle,
+  });
+
+  const iconSpring = useSpring({
+    from: { transform: 'scale(0) rotate(-180deg)' },
+    to: { transform: 'scale(1) rotate(0deg)' },
+    delay: 300,
+    config: { ...config.wobbly, tension: 300, friction: 10 },
+  });
+
+  const handleModalClose = () => {
+    setIsVisible(false);
+    setTimeout(onClose, 300);
+  };
 
   const updateLocalStorage = () => {
     const storageData = JSON.parse(localStorage.getItem("emailData"));
@@ -40,6 +71,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
   };
 
   const handleUpdateMail = async () => {
+    setIsLoading(true);
     try {
       await updateEmailForward({
         userEmail: email,
@@ -52,128 +84,95 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
       handleModalClose();
     } catch (error) {
       console.error("Error updating email forward:", error);
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
   };
 
+  if (!isVisible) return null;
+
   return (
-    <div
-      className={`z-50 fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-full h-full p-4 bg-gray-800 bg-opacity-80 overflow-y-auto ${
-        !isModalOpen ? "hidden" : ""
-      }`}
+    <animated.div
+      style={backdropSpring}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-80"
+      onClick={handleModalClose}
     >
-      <div className="max-w-xl w-full mx-auto bg-gray-500 rounded-xl overflow-hidden">
-        <div className="max-w-sm mx-auto pt-12 pb-8 px-5 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 mb-5 bg-gray-600 rounded-full">
-            <svg
-              className="h-8 w-8 text-primary"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" />
-              <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-              <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-              <line x1="16" y1="5" x2="19" y2="8" />
-            </svg>
-          </div>
-          <h4 className="text-lg text-gray-100 font-semibold mb-5">
-            Atualizar <br /> dados redirecionamento
+      <animated.div
+        style={modalSpring}
+        className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/10 to-brand-light/10 animate-pulse"></div>
+          <animated.div
+            style={iconSpring}
+            className="flex items-center justify-center w-20 h-20 mb-6 bg-gray-700 rounded-full mx-auto relative z-10"
+          >
+            <Edit2 className="h-10 w-10 text-brand-light" />
+          </animated.div>
+          <h4 className="text-3xl text-white font-bold mb-4 text-center relative z-10">
+            Atualizar dados de redirecionamento
           </h4>
-          <p className="text-gray-300 font-medium">
+          <p className="text-gray-300 mb-6 text-center relative z-10">
             Você está prestes a atualizar os dados de redirecionamento do e-mail{" "}
-            <span className="font-semibold text-gray-50">{email}</span> .
+            <span className="font-semibold text-brand-light">{email}</span>.
             Esta ação não é permanente e pode ser revertida a qualquer momento.
           </p>
-          <form className="mt-10">
-            <div className="relative w-full h-14 py-4 px-3 mb-10 border border-gray-400 focus-within:border-green-500 rounded-lg">
-              <span className="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">
+          <animated.form style={formSpring} className="space-y-6 relative z-10">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-gray-300">
                 Email
-              </span>
-              <input
-                className="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium"
-                id="modalInput7-1"
+              </Label>
+              <Input
+                id="email"
                 type="email"
                 value={email}
                 disabled
+                className="bg-gray-700 text-white border-gray-600 focus:border-brand-light"
               />
             </div>
-            <div className="relative w-full h-14 py-4 px-3 mb-10 border border-gray-400 focus-within:border-primary rounded-lg">
-              <span className="absolute flex gap-2 bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">
-                Encaminha para:
-                <svg
-                  className="h-4 w-4 text-primary"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 20h9" />
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                </svg>
-              </span>
-              <input
-                className="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium"
-                id="modalInput7-5"
-                type="text"
+            <div className="space-y-2">
+              <Label htmlFor="redirectMail" className="text-sm font-medium text-gray-300 flex items-center">
+                Encaminha para: <Mail className="h-4 w-4 ml-1 text-brand-light" />
+              </Label>
+              <Input
+                id="redirectMail"
+                type="email"
                 value={redirectMail}
                 onChange={(e) => setRedirectMail(e.target.value)}
+                className="bg-gray-700 text-white border-gray-600 focus:border-brand-light"
               />
             </div>
-            <div className="relative w-full h-14 py-4 px-3 mb-6 border border-gray-400 focus-within:border-primary rounded-lg">
-              <span className="absolute flex gap-2 bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">
-                Finalidade
-                <svg
-                  className="h-4 w-4 text-primary"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 20h9" />
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                </svg>
-              </span>
-              <input
-                className="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium"
-                id="modalInput7-5"
+            <div className="space-y-2">
+              <Label htmlFor="emailPurpose" className="text-sm font-medium text-gray-300 flex items-center">
+                Finalidade <Edit2 className="h-4 w-4 ml-1 text-brand-light" />
+              </Label>
+              <Input
+                id="emailPurpose"
                 type="text"
                 value={emailPurpose}
                 onChange={(e) => setEmailPurpose(e.target.value)}
+                className="bg-gray-700 text-white border-gray-600 focus:border-brand-light"
               />
             </div>
-          </form>
+          </animated.form>
         </div>
-        <div className="pt-5 pb-6 px-6 text-right bg-gray-600 -mb-2">
-          <button
+        <div className="px-6 py-4 bg-gray-700 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 relative z-10">
+          <Button
             onClick={handleModalClose}
-            className="inline-block w-full sm:w-auto py-3 px-5 mb-2 mr-4 text-center font-semibold leading-6 text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg transition duration-200"
+            variant="secondary"
+            className="w-full sm:w-auto hover:bg-gray-600 transition-colors duration-300"
           >
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleUpdateMail}
             disabled={isLoading}
-            className={`inline-block w-full sm:w-auto py-3 px-5 mb-2 text-center font-semibold leading-6 text-blue-50 ${
+            className={`w-full sm:w-auto ${
               isLoading
-                ? "bg-teal-500 cursor-not-allowed"
-                : "bg-teal-700 hover:bg-teal-600"
-            } rounded-lg transition duration-200`}
+                ? "bg-brand-dark-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-brand-dark to-brand-light hover:shadow-lg hover:scale-105"
+            } text-white font-semibold transition-all duration-300`}
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
@@ -200,10 +199,10 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
             ) : (
               "Atualizar"
             )}
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+      </animated.div>
+    </animated.div>
   );
 };
 

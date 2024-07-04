@@ -1,14 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMail } from "@/hooks/useMail";
+import { Button } from "@/components/ui/button";
+import { Info } from 'lucide-react';
+import { useSpring, animated, config } from "react-spring";
 
 const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { activateEmailForward } = useMail();
 
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const backdropSpring = useSpring({
+    opacity: isVisible ? 1 : 0,
+    config: config.molasses,
+  });
+
+  const modalSpring = useSpring({
+    transform: isVisible ? "scale(1) translateY(0)" : "scale(0.9) translateY(-50px)",
+    opacity: isVisible ? 1 : 0,
+    config: { ...config.wobbly, tension: 300, friction: 20 },
+  });
+
+  const iconSpring = useSpring({
+    from: { transform: "scale(0) rotate(-180deg)" },
+    to: { transform: "scale(1) rotate(0deg)" },
+    delay: 300,
+    config: { ...config.wobbly, tension: 300, friction: 10 },
+  });
+
   const handleModalClose = () => {
-    setIsModalOpen(false);
-    onClose();
+    setIsVisible(false);
+    setTimeout(onClose, 300);
   };
 
   const updateLocalStorage = () => {
@@ -34,90 +59,89 @@ const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
       updateLocalStorage();
       handleModalClose();
     } catch (error) {
-      console.error("Error cancelling email forward:", error);
+      console.error("Error activating email forward:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (!isVisible) return null;
+
   return (
-    <div
-      className={`z-50 fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-full h-full p-4 bg-gray-800 bg-opacity-80 overflow-y-auto ${
-        !isModalOpen ? "hidden" : ""
-      }`}
+    <animated.div
+      style={backdropSpring}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-80"
+      onClick={handleModalClose}
     >
-      <div className="max-w-xl w-full mx-auto bg-gray-500 rounded-xl overflow-hidden">
-        <div className="max-w-sm mx-auto pt-12 pb-8 px-5 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 mb-5 bg-gray-600 rounded-full">
-            <svg
-              class="h-8 w-8 text-teal-300"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              {" "}
-              <circle cx="12" cy="12" r="10" />{" "}
-              <line x1="12" y1="16" x2="12" y2="12" />{" "}
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-          </div>
-          <h4 className="text-lg text-gray-100 font-semibold mb-5">
-            Reativar <br /> Redirecionamento de E-mail
+      <animated.div
+        style={modalSpring}
+        className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/10 to-brand-light/10 animate-pulse"></div>
+          <animated.div
+            style={iconSpring}
+            className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-gray-700 rounded-full relative z-10"
+          >
+            <Info className="h-10 w-10 text-brand-light" />
+          </animated.div>
+          <h4 className="text-3xl text-white font-bold mb-4 relative z-10">
+            Reativar Redirecionamento
           </h4>
-          <p className="text-gray-300 font-medium">
+          <p className="text-gray-300 mb-6 relative z-10">
             Você está prestes a reativar o redirecionamento do e-mail{" "}
-            <span className="font-semibold text-gray-50">{email}</span> para{" "}
-            <span className="font-semibold text-gray-50">{redirectmail}</span>.
+            <span className="font-semibold text-brand-light">{email}</span> para{" "}
+            <span className="font-semibold text-brand-light">{redirectmail}</span>.
             Esta ação não é permanente e pode ser revertida a qualquer momento.
           </p>
+          <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 relative z-10">
+            <Button
+              onClick={handleModalClose}
+              variant="secondary"
+              className="w-full sm:w-auto hover:bg-gray-600 transition-colors duration-300"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleActivated}
+              disabled={isLoading}
+              className={`w-full sm:w-auto ${
+                isLoading
+                  ? "bg-brand-dark-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-brand-dark to-brand-light hover:shadow-lg hover:scale-105"
+              } text-white font-semibold transition-all duration-300`}
+            >
+              {isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-3 text-white"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Reativando...
+                </span>
+              ) : (
+                "Reativar"
+              )}
+            </Button>
+          </div>
         </div>
-        <div className="pt-5 pb-6 px-6 text-right bg-gray-600 -mb-2">
-          <button
-            onClick={handleModalClose}
-            className="inline-block w-full sm:w-auto py-3 px-5 mb-2 mr-4 text-center font-semibold leading-6 text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg transition duration-200"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleActivated}
-            disabled={isLoading}
-            className={`inline-block w-full sm:w-auto py-3 px-5 mb-2 text-center font-semibold leading-6 text-blue-50 ${
-              isLoading
-                ? "bg-teal-500 cursor-not-allowed"
-                : "bg-teal-700 hover:bg-teal-600"
-            } rounded-lg transition duration-200`}
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center">
-                <svg
-                  className="animate-spin h-5 w-5 mr-3 text-white"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Reativando...
-              </span>
-            ) : (
-              "Reativar"
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
+      </animated.div>
+    </animated.div>
   );
 };
 

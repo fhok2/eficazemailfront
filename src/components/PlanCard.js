@@ -1,4 +1,5 @@
 import React from "react";
+import { Check, ArrowRight } from 'lucide-react';
 
 const PlanCard = ({
   title,
@@ -8,63 +9,58 @@ const PlanCard = ({
   buttonLink,
   features,
   textConditions,
+  isPopular = false
 }) => {
   return (
-    <aside className="relative border gradient-border-mask mx-auto flex  sm:min-h-[580px] md:min-h-[480px] lg:min-h-[480px]  flex-col rounded-xl px-8 text-white  xl:min-h-[480px] w-[354px] py-4 bg-black">
-      <div className="relative flex flex-col h-full w-full rounded-xl bg-gradient-to-br ">
-        <span className="mt-4 flex flex-row items-center justify-center gap-4">
-          <h2
-            className={`bg-gradient-to-br text-center text-4xl ${
-              title === "Grátis"
-                ? "text-white"
-                : "from-primary to-blue-300 bg-clip-text text-transparent"
-            }`}
-          >
-            {title}
-          </h2>
-        </span>
-        <div className="mt-6 text-center">{seats}</div>
-        <div className="mx-auto mt-6 flex text-3xl md:w-48 md:text-4xl text-center">
-          {price}
+    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-b from-gray-800 to-gray-900 text-white shadow-xl transition-all duration-300 hover:scale-105 ${isPopular ? 'border-2 border-teal-400' : 'border border-gray-700'}`}>
+      {isPopular && (
+        <div className="absolute top-0 right-0 bg-teal-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg">
+          Popular
         </div>
-        <div className="mx-auto mt-6 flex justify-center">
-          <a className="transition-all duration-150" href={buttonLink}>
-            <button className="font-semibold items-center justify-center rounded transition duration-100 ease-in-out focus:outline-none focus:ring-4 border border-white text-white hover:border-gray-100 hover:text-gray-100 disabled:border-gray-100 focus:ring-gray-600 px-4 py-2 flex h-[40px]  text-center text-lg w-[200px]">
-              <span>{buttonText}</span>
-            </button>
-          </a>
-        </div>
-        <div className="flex flex-col justify-center items-center">
-          <div className="mt-6 flex flex-row items-center justify-center">
-            <div className="h-[1px] w-[30px] bg-gradient-to-br from-primary to-blue-300"></div>
-            <span className="mx-2">O que está incluso</span>
-            <div className="h-[1px] w-[30px] bg-gradient-to-br from-primary to-blue-300"></div>
-          </div>
-          <div className="mt-6 flex w-56 flex-col justify-center gap-1">
-            {features.map((feature, index) => (
-              <FeatureItem key={index} text={feature} />
-            ))}
-          </div>
-          <div className="mt-4 flex justify-start gap-1 font-sans text-[10px]">
-        <p>{textConditions}</p>
+      )}
+      <div className="p-8">
+        <h2 className={`text-3xl font-bold mb-4 ${isPopular ? 'text-teal-400' : 'text-white'}`}>
+          {title}
+        </h2>
+        <div className="text-gray-400 mb-4">{seats}</div>
+        <div className="text-4xl font-bold mb-6">{price}</div>
+        <a 
+          href={buttonLink}
+          className={`block w-full text-center py-3 rounded-lg font-semibold transition-all duration-300 ${
+            isPopular 
+              ? 'bg-teal-400 text-gray-900 hover:bg-teal-300' 
+              : 'bg-gray-700 text-white hover:bg-gray-600'
+          }`}
+        >
+          {buttonText}
+          <ArrowRight className="inline-block ml-2 h-5 w-5" />
+        </a>
       </div>
+      <div className="px-8 pb-8">
+        <div className="flex items-center justify-center mb-4">
+          <div className="h-px w-10 bg-gray-700"></div>
+          <span className="px-1 text-xs text-gray-400">O que está incluso</span>
+          <div className="h-px w-10 bg-gray-700"></div>
+        </div>
+        <ul className="space-y-3">
+          {features.map((feature, index) => (
+            <FeatureItem key={index} text={feature} />
+          ))}
+        </ul>
+        <div className="mt-6 text-xs text-gray-400">
+          {textConditions}
         </div>
       </div>
-      
-    </aside>
+    </div>
   );
 };
 
 const FeatureItem = ({ text }) => {
   return (
-    <div className="flex flex-row items-center text-left">
-      <div className="mr-1 h-6 w-6 shrink-0">
-        <svg viewBox="0 0 24 24" className="h-full w-full fill-primary">
-          <path d="m10 15.586-3.293-3.293-1.414 1.414L10 18.414l9.707-9.707-1.414-1.414z"></path>
-        </svg>
-      </div>
-      {text}
-    </div>
+    <li className="flex items-center text-sm">
+      <Check className="mr-2 h-5 w-5 text-teal-400" />
+      <span>{text}</span>
+    </li>
   );
 };
 

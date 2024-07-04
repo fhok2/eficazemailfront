@@ -22,16 +22,16 @@ const MenuToggle = ({ toggle, isOpen }) => (
     <svg width="23" height="18" viewBox="0 0 23 18">
       <Path
         d="M 2 2.5 L 20 2.5"
-        className="top-path"
+        className="top-path text-teal-50"
         variants={{
           closed: { d: "M 2 2.5 L 20 2.5" },
           open: { d: "M 3 16.5 L 17 2.5" },
         }}
       />
-      <Path d="M 2 9.423 L 20 9.423" opacity="1" className="middle-path" />
+      <Path d="M 2 9.423 L 20 9.423" opacity="1" className="middle-path text-teal-50" />
       <Path
         d="M 2 16.346 L 20 16.346"
-        className="bottom-path"
+        className="bottom-path text-teal-50"
         variants={{
           closed: { d: "M 2 16.346 L 20 16.346" },
           open: { d: "M 3 2.5 L 17 16.346" },
@@ -42,17 +42,19 @@ const MenuToggle = ({ toggle, isOpen }) => (
 );
 
 const Menu = ({ closeMenu }) => (
-  <nav className="fixed top-0 right-0 bottom-0 w-80 bg-accent pt-24 transform translate-x-full will-change-transform transition-transform duration-300 z-40">
+  <nav className="fixed top-0 right-0 bottom-0 w-80 bg-accent pt-24 transform translate-x-full will-change-transform transition-transform duration-300 z-40 bg-teal-600">
     <ul className="flex flex-col gap-2.5 p-4">
-      <Link href="/planos">
+      <Link href="#plain">
         <li
           onClick={() => closeMenu()}
-          className="text-background block font-bold text-4xl p-10 transform will-change-transform opacity-0 scale-50 blur-md"
+          className="text-background block font-bold text-4xl p-10 transform will-change-transform opacity-0 scale-50 blur-md
+          hover:scale-75 
+          "
         >
           Planos
         </li>
       </Link>
-      <Link href="/faq">
+      <Link href="#faq">
         <li
           onClick={() => closeMenu()}
           className="text-background block font-bold text-4xl p-10 transform will-change-transform opacity-0 scale-50 blur-md"

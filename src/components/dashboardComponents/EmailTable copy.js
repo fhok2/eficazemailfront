@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { CopyIcon, CheckIcon, XIcon, Edit2Icon, RefreshCwIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CopyIcon, CheckIcon, XIcon, EditIcon, RefreshCwIcon } from 'lucide-react';
 import DeactivateAccountModal from '../modal/DeactivateAccountModal';
 import AccountActivatedModal from '../modal/AccountActivatedModal';
 import UpdateEmailDataModal from '../modal/UpdateEmailDataModal';
-import { motion } from 'framer-motion';
 
 const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl"
+    >
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">{email.address}</h3>
           <motion.button
-  whileHover={{ scale: 1.1 }}
-  whileTap={{ scale: 0.9 }}
-  onClick={() => onCopy(email.address)}
-  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
->
-  {copied === email.address ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
-</motion.button>
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => onCopy(email.address)}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            {copied === email.address ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
+          </motion.button>
         </div>
         <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
           <p><span className="font-medium">Encaminha para:</span> {email.forwarding}</p>
@@ -34,7 +40,9 @@ const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate }
             {email.status === 'active' ? 'Ativo' : 'Inativo'}
           </span>
           <div className="flex space-x-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => email.status === 'active' ? onDeactivate(email) : onActivate(email)}
               className={`p-2 rounded-full ${
                 email.status === 'active' ? 'bg-red-100 text-red-600 dark:bg-red-800 dark:text-red-100' :
@@ -42,21 +50,23 @@ const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate }
               }`}
             >
               {email.status === 'active' ? <XIcon size={18} /> : <RefreshCwIcon size={18} />}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => onUpdate(email)}
               className="p-2 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-100"
             >
-              <Edit2Icon size={18} />
-            </button>
+              <EditIcon size={18} />
+            </motion.button>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-const EmailList = ({ isLoading, loadEmails }) => {
+const EmailTable = ({ isLoading, loadEmails }) => {
   const [emails, setEmails] = useState([]);
   const [copied, setCopied] = useState(null);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
@@ -102,14 +112,6 @@ const EmailList = ({ isLoading, loadEmails }) => {
     setIsUpdateModalOpen(true);
   };
 
-  const handleCloseModals = () => {
-    setIsDeactivateModalOpen(false);
-    setIsActivateModalOpen(false);
-    setIsUpdateModalOpen(false);
-    setSelectedEmail(null);
-    loadEmails();
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Seus Emails</h2>
@@ -118,44 +120,49 @@ const EmailList = ({ isLoading, loadEmails }) => {
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {emails.map((email) => (
-            <EmailCard
-              key={email.address}
-              email={email}
-              onCopy={handleCopyEmail}
-              copied={copied}
-              onActivate={handleOpenActivateModal}
-              onDeactivate={handleOpenDeactivateModal}
-              onUpdate={handleOpenUpdateModal}
-            />
-          ))}
-        </div>
+        <AnimatePresence>
+          <motion.div 
+            layout
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {emails.map((email) => (
+              <EmailCard
+                key={email.address}
+                email={email}
+                onCopy={handleCopyEmail}
+                copied={copied}
+                onActivate={handleOpenActivateModal}
+                onDeactivate={handleOpenDeactivateModal}
+                onUpdate={handleOpenUpdateModal}
+              />
+            ))}
+          </motion.div>
+        </AnimatePresence>
       )}
       {isDeactivateModalOpen && (
         <DeactivateAccountModal
-          redirectmail={selectedEmail.forwarding}
-          email={selectedEmail.address}
-          onClose={handleCloseModals}
+          redirectmail={redirectmail}
+          email={selectedEmail}
+          onClose={handleCloseDeactivateModal}
         />
       )}
       {isActivateModalOpen && (
         <AccountActivatedModal
-          redirectmail={selectedEmail.forwarding}
-          email={selectedEmail.address}
-          onClose={handleCloseModals}
+          redirectmail={redirectmail}
+          email={selectedEmail}
+          onClose={handleCloseActivateModal}
         />
       )}
       {isUpdateModalOpen && (
         <UpdateEmailDataModal
-          redirectmail={selectedEmail.forwarding}
-          email={selectedEmail.address}
-          onClose={handleCloseModals}
-          purpose={selectedEmail.purpose}
+          redirectmail={redirectmail}
+          email={selectedEmail}
+          onClose={handleCloseUpdateModal}
+          purpose={purpose}
         />
       )}
     </div>
   );
 };
 
-export default EmailList;
+export default EmailTable;

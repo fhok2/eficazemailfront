@@ -18,7 +18,7 @@ const pain = [
 const PricingSection = () => {
   return (
     <section
-      id="planos"
+      id="plain"
       className="flex flex-col justify-center items-center gap-10 max-w-screen-lg mx-auto my-20 "
     >
       
@@ -34,7 +34,7 @@ const PricingSection = () => {
               </>
             }
             buttonText="Testar grátis"
-            buttonLink="#testefree"
+            buttonLink="/login"
             features={free}
             textConditions="*Sem cartão de crédito ou cadastro necessário"
           />

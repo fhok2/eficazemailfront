@@ -6,9 +6,7 @@ import Head from 'next/head';
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Footer from "@/components/Footer";
-import AddCookierToken from '@/components/AddCookierToken';  
-import Navbar1 from '@/components/Nav';
-import { CsrfProvider, useCsrfToken } from '@/contexts/CsrfContext';
+
 
 const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: false });
 
@@ -25,19 +23,19 @@ export default function RootLayout({ children }) {
         <title>Liberte-se das Restrições de Email com @eficaz.email: A Revolução dos Descontos Ilimitados</title>
       </Head>
       <body className={inter.className}>
-        <CsrfProvider> {/* Envolva o conteúdo com AddCookierToken */}
+      
           {!isDashboard && (
             <header>
               <Navbar />
             </header>
           )}
-          <main>
+          <main className='w-full'>
             {children}
           </main>
           <footer>
             <Footer />
           </footer>
-        </CsrfProvider>
+    
       </body>
     </html>
   );

@@ -7,10 +7,10 @@
     "config": "tailwind.config.js",
     "css": "src/app/globals.css",
     "baseColor": "gray",
-    "cssVariables": false
+    "cssVariables": true
   },
   "aliases": {
-    "utils": "@/lib/utils",
-    "components": "@/components"
+    "components": "@/components",
+    "utils": "@/lib/utils"
   }
 }

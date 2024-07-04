@@ -1,14 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMail } from "@/hooks/useMail";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from 'lucide-react';
+import { useSpring, animated, config } from "react-spring";
 
 const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const { cancelEmailForward } = useMail();
 
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const modalAnimation = useSpring({
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(-50px)',
+    config: { ...config.wobbly, tension: 300, friction: 20 },
+  });
+
+  const contentAnimation = useSpring({
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+    delay: 100,
+    config: config.gentle,
+  });
+
+  const iconAnimation = useSpring({
+    transform: isVisible ? 'scale(1) rotate(0deg)' : 'scale(0) rotate(-180deg)',
+    delay: 200,
+    config: { ...config.wobbly, tension: 300, friction: 10 },
+  });
+
   const handleModalClose = () => {
-    setIsModalOpen(false);
-    onClose();
+    setIsVisible(false);
+    setTimeout(onClose, 300);
   };
 
   const updateLocalStorage = () => {
@@ -39,54 +65,51 @@ const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
       setIsLoading(false);
     }
   };
+
+  if (!isVisible) return null;
+
   return (
-    <div
-      className={`z-50 fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center w-full h-full p-4 bg-gray-800 bg-opacity-80 overflow-y-auto ${
-        !isModalOpen ? "hidden" : ""
-      }`}
-    >
-      <div className="max-w-xl w-full mx-auto bg-gray-500 rounded-xl overflow-hidden">
-        <div className="max-w-sm mx-auto pt-12 pb-8 px-5 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 mb-5 bg-gray-600 rounded-full">
-            <svg
-              className="h-8 w-8 text-red-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-          </div>
-          <h4 className="text-lg text-gray-100 font-semibold mb-5">
-            Desativar <br /> Redirecionamento de E-mail
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-80">
+      <animated.div
+        style={modalAnimation}
+        className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden shadow-xl"
+      >
+        <animated.div style={contentAnimation} className="p-6">
+          <animated.div 
+            style={iconAnimation} 
+            className="flex items-center justify-center w-16 h-16 mb-6 bg-gray-700 rounded-full mx-auto"
+          >
+            <AlertTriangle className="h-8 w-8 text-teal-500" />
+          </animated.div>
+          <h4 className="text-2xl text-white font-bold mb-4 text-center">
+            Desativar Redirecionamento
           </h4>
-          <p className="text-gray-300 font-medium">
+          <p className="text-gray-300 mb-6 text-center">
             Você está prestes a desativar o redirecionamento do e-mail{" "}
-            <span className="font-semibold text-gray-50">{email}</span> para{" "}
-            <span className="font-semibold text-gray-50">{redirectmail}</span>.
+            <span className="font-semibold text-white">{email}</span> para{" "}
+            <span className="font-semibold text-white">{redirectmail}</span>.
             Esta ação não é permanente e pode ser revertida a qualquer momento.
           </p>
-        </div>
-        <div className="pt-5 pb-6 px-6 text-right bg-gray-600 -mb-2">
-          <button
+        </animated.div>
+        <animated.div 
+          style={contentAnimation} 
+          className="px-6 py-4 bg-gray-700 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3"
+        >
+          <Button
             onClick={handleModalClose}
-            className="inline-block w-full sm:w-auto py-3 px-5 mb-2 mr-4 text-center font-semibold leading-6 text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg transition duration-200"
+            variant="secondary"
+            className="w-full sm:w-auto"
           >
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleDeactivate}
             disabled={isLoading}
-            className={`inline-block w-full sm:w-auto py-3 px-5 mb-2 text-center font-semibold leading-6 text-blue-50 ${
+            className={`w-full sm:w-auto ${
               isLoading
-                ? "bg-teal-500 cursor-not-allowed"
-                : "bg-teal-700 hover:bg-teal-600"
-            } rounded-lg transition duration-200`}
+                ? "bg-teal-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-teal-400 to-brand-light hover:shadow-lg hover:scale-105"
+            } text-white font-semibold transition-all duration-300`}
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
@@ -113,9 +136,9 @@ const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
             ) : (
               "Desativar"
             )}
-          </button>
-        </div>
-      </div>
+          </Button>
+        </animated.div>
+      </animated.div>
     </div>
   );
 };

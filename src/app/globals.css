@@ -1,144 +1,98 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
+  @tailwind components;
+  @tailwind utilities;
 
-:root {
-  --black: #000000;
-  --ash-black: #222;
-  --white: #fafafa;
-  --sky: #00ccff;
-  --green: #22dddd;
-  --blue: #1300ff;
-  --dusk: #6600ff;
-  --purple: #9900ff;
-  --pink: #ff0066;
-  --red: #fe0222;
-  --orange: #fd7702;
-  --yellow: #ffbb00;
-  --green: #048374;
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 224 71.4% 4.1%;
 
-  --background: var(--white);
-  --accent: var(--green);
-}
+      --card: 0 0% 100%;
+      --card-foreground: 224 71.4% 4.1%;
 
-.text-background {
-  color: var(--background);
-}
+      --popover: 0 0% 100%;
+      --popover-foreground: 224 71.4% 4.1%;
 
-.bg-accent {
-  background-color: var(--accent);
-}
+      --primary: 220.9 39.3% 11%;
+      --primary-foreground: 210 20% 98%;
 
-.fill-background {
-  fill: var(--background);
-}
+      --secondary: 220 14.3% 95.9%;
+      --secondary-foreground: 220.9 39.3% 11%;
 
-body {
-  @apply bg-custom-bg text-white; /* Aplica a cor de fundo e define a cor do texto como branca */
-}
+      --muted: 220 14.3% 95.9%;
+      --muted-foreground: 220 8.9% 46.1%;
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.blinking-cursor {
-  animation: blink 1s step-end infinite;
-}
+      --accent: 220 14.3% 95.9%;
+      --accent-foreground: 220.9 39.3% 11%;
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #000 !important;
-    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
-    transition: background-color 5000s ease-in-out 0s;
-}
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 20% 98%;
 
-input:-moz-autofill {
-    color: #000 !important;
-    background-color: transparent !important;
-}
+      --border: 220 13% 91%;
+      --input: 220 13% 91%;
+      --ring: 224 71.4% 4.1%;
 
-input:-internal-autofill-selected {
-    background-color: transparent !important;
-    color: #000 !important;
-}
+      --radius: 0.5rem;
+    }
 
-@keyframes blink {
-  from, to {
-    opacity: 0;
+    .dark {
+      --background: 224 71.4% 4.1%;
+      --foreground: 210 20% 98%;
+
+      --card: 224 71.4% 4.1%;
+      --card-foreground: 210 20% 98%;
+
+      --popover: 224 71.4% 4.1%;
+      --popover-foreground: 210 20% 98%;
+
+      --primary: 210 20% 98%;
+      --primary-foreground: 220.9 39.3% 11%;
+
+      --secondary: 215 27.9% 16.9%;
+      --secondary-foreground: 210 20% 98%;
+
+      --muted: 215 27.9% 16.9%;
+      --muted-foreground: 217.9 10.6% 64.9%;
+
+      --accent: 215 27.9% 16.9%;
+      --accent-foreground: 210 20% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 20% 98%;
+
+      --border: 215 27.9% 16.9%;
+      --input: 215 27.9% 16.9%;
+      --ring: 216 12.2% 83.9%;
+    }
   }
-  50% {
-    opacity: 1;
+
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
   }
-}
-.after\:gradient-border::after {
-  content: "";
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  bottom: -2px;
-  left: -2px;
-  background: linear-gradient(to br, var(--color-primary), var(--color-blue-300));
-  z-index: -1;
-  border-radius: inherit;
-}
-.text-gradient-gbv {
-  background-image: linear-gradient(90.1deg, rgb(9 182 162 /10%), rgb(9 182 160 /20%));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 120px;
-  height: 25px;
- }
- 
- .switch input {
-  display: none;
- }
- 
- .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #3C3C3C;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 4px;
- }
- 
- .slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 4%;
- }
- 
- input:checked + .slider {
-  background-color: rgb(4 157 142);
- }
- 
- input:focus + .slider {
-  box-shadow: 0 0 1px #60d5c4;
- }
- 
- input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(85px);
- }
- 
-
- 
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998; /* Ajuste o z-index conforme necessário */
+  }
+  
+  .modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 9999; /* Ajuste o z-index conforme necessário */
+  }
+  

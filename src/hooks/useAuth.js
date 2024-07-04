@@ -52,8 +52,9 @@ export const useAuth = () => {
 
     isRefreshing.current = true;
     refreshPromiseRef.current = (async () => {
+      const refreshToken = localStorage.getItem('refreshToken');
       try {
-        const response = await refreshTokenApiCall();
+        const response = await refreshTokenApiCall(refreshToken);
 
         if (response.error) {
           handleLogout();
@@ -129,12 +130,14 @@ export const useAuth = () => {
 
   const handleLogin = async (credentials) => {
     const response = await loginService(credentials);
+   
     if (response.error) {
       return { error: true, message: response.message };
     } else {
-      const { token } = response;
+   
       if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem('accessToken', response.token);
+        localStorage.setItem('refreshToken', response.refreshToken);
       }
       setToken(token);
       return { error: false };

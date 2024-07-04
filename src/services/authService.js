@@ -1,87 +1,74 @@
+// authService.js
+
 import api from './api';
 
-export const login = async (credentials) => {
+const handleApiError = (error) => ({
+  error: true,
+  message: error.response?.data?.message || 'An unexpected error occurred'
+});
+
+const apiCall = async (method, endpoint, data = {}, config = {}) => {
   try {
-    const response = await api.post('/auth/login', {
-      email: credentials.email,
-      password: credentials.password,
-    });
+    const response = await api[method](endpoint, data, config);
     return response.data;
   } catch (error) {
-    return { error: true, message: error.response ? error.response.data.message : 'An unexpected error occurred' };
+    return handleApiError(error);
   }
 };
 
-export const refreshTokenApiCall = async () => {
-  try {
-    const response = await api.post('/auth/refreshToken', {}, {
-      withCredentials: true // Isso faz o axios incluir os cookies na requisição
-    });
-    return response.data;
-  } catch (error) {
-    return { error: true, message: 'Failed to refresh accessToken' };
+export const login = async (credentials) => {
+  const response = await apiCall('post', '/auth/login', credentials);
+  if (!response.error) {
+    localStorage.setItem('accessToken', response.token);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
   }
+  return response;
+};
+
+export const refreshTokenApiCall = async (refreshToken) => {
+  const response = await apiCall('post', '/auth/refreshToken', { refreshToken });
+  if (!response.error) {
+    localStorage.setItem('accessToken', response.token);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    // Atualize os dados do dashboard se necessário
+    if (response.dashboardData) {
+      localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
+    }
+  }
+  return response;
 };
 
 export const register = async (userData) => {
-  try {
-    const response = await api.post('/user/register', userData);
-   
-    return response.data;
-  } catch (error) {
-    return { error: true, message: error.response ? error.response.data.message : 'An unexpected error occurred' };
+  const response = await apiCall('post', '/user/register', userData);
+  if (!response.error) {
+    localStorage.setItem('accessToken', response.token);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    if (response.dashboardData) {
+      localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
+    }
   }
+  return response;
 };
 
 export const logout = async () => {
-  try {
-    const response = await api.post('/auth/logout', {}, {
-      withCredentials: true // Isso faz o axios incluir os cookies na requisição
-    });
-    // Remover tokens do localStorage
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    return response.data;
-  } catch (error) {
-    return { error: true, message: error.response ? error.response.data.message : 'An unexpected error occurred' };
-  }
+  const result = await apiCall('post', '/auth/logout', {}, { withCredentials: true });
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('dashboardData');
+  return result;
 };
 
-export const checkEmail = async (email) => {
-  try {
-    const response = await api.post('/user/check-email', { email });
-    return response.data;
-  } catch (error) {
-   
-    return { error: true, message: error.response ? error.response.data.message : 'An unexpected error occurred' };
-  }
+export const getDashboardData = () => {
+  const data = localStorage.getItem('dashboardData');
+  return data ? JSON.parse(data) : null;
 };
 
+export const checkEmail = (email) =>
+  apiCall('post', '/user/check-email', { email });
 
-export const requestPasswordReset = async (email, baseUrl) => {
-  try {
-    const response = await api.post('/auth/requestPasswordReset', { email, baseUrl });
-    return response.data;
-  } catch (error) {
-   
-    return {
-      error: true,
-      message: error.response ? error.response.data.message : 'An unexpected error occurred'
-    };
-  }
-};
+export const requestPasswordReset = (email, baseUrl) =>
+  apiCall('post', '/auth/requestPasswordReset', { email, baseUrl });
 
-
-export const resetPassword = async (token, newPassword) => {
-  try {
-    const response = await api.post(`/auth/resetPassword/${token}`, { newPassword });
-   
-    return response.data;
-  } catch (error) {
-    
-    return { 
-      error: true, 
-      message: error.response ? error.response.data.message : 'An unexpected error occurred' 
-    };
-  }
-}
+export const resetPassword = (token, newPassword) =>
+  apiCall('post', `/auth/resetPassword/${token}`, { newPassword });
