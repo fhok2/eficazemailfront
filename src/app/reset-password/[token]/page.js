@@ -9,8 +9,12 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import { useRouter } from "next/navigation";
 import { resetPassword } from "@/services/authService";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useParams } from 'next/navigation';
 
-const PasswordReset = ({ token }) => {
+const PasswordReset = () => {
+  const params = useParams();
+  const token = params.token;
+
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -34,24 +38,19 @@ const PasswordReset = ({ token }) => {
     config: { tension: 300, friction: 10 },
   });
 
-  const shakeAnimation = useSpring({
-    from: { x: 0 },
-    to: async (next) => {
-      await next({ x: -10 });
-      await next({ x: 10 });
-      await next({ x: -10 });
-      await next({ x: 10 });
-      await next({ x: 0 });
-    },
-    config: { tension: 300, friction: 10 },
-    reset: true,
-  });
+  const [shake, setShake] = useSpring(() => ({ x: 0 }));
 
   useEffect(() => {
     if (error) {
-      shakeAnimation.start();
+      setShake({ x: 0, from: { x: -10 }, config: { tension: 300, friction: 10 } });
     }
-  }, [error, shakeAnimation]);
+  }, [error, setShake]);
+
+  useEffect(() => {
+    if (!token) {
+      setError("Token inválido. Por favor, verifique o link de redefinição de senha.");
+    }
+  }, [token]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +63,12 @@ const PasswordReset = ({ token }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    if (!token) {
+      setError("Token inválido. Por favor, verifique o link de redefinição de senha.");
+      setLoading(false);
+      return;
+    }
 
     if (formData.password.length < 8) {
       setError("A senha deve ter pelo menos 8 caracteres.");
@@ -137,7 +142,7 @@ const PasswordReset = ({ token }) => {
             Digite sua nova senha abaixo
           </p>
           {error && (
-            <animated.div style={shakeAnimation}>
+            <animated.div style={shake}>
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Erro</AlertTitle>
@@ -162,7 +167,7 @@ const PasswordReset = ({ token }) => {
             <animated.div style={buttonAnimation}>
               <Button 
                 type="submit"
-                disabled={loading}
+                disabled={loading || !token}
                 className="w-full py-3 px-4 bg-gradient-to-r from-teal-400 to-brand-light text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center"
               >
                 {loading ? "Processando..." : "Criar nova senha"}

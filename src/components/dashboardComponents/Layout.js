@@ -83,47 +83,51 @@ const Sidebar = ({ sidebarOpen, closeSidebar, currentPage, setCurrentPage, openC
           isCollapsed ? 'w-16' : 'w-64'
         }`}
       >
-        <div className="p-4 flex flex-col justify-between h-full">
+        <div className="p-6 flex mt-10 flex-col justify-between h-screen">
           <div className="space-y-2">
             <button
               onClick={closeSidebar}
               className="lg:hidden absolute top-4 right-4 text-gray-300 hover:text-white"
             >
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6  " />
             </button>
-            <SidebarItem 
-              icon={Home} 
-              text="Inicio" 
-              href="#" 
-              onClick={handleNavigation('dashboard')}
-              isActive={currentPage === 'dashboard'}
-              isCollapsed={isCollapsed}
-            />
-            <SidebarItem
-              icon={RefreshCcw}
-              text="Novo redirecionamento"
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                openCreateRedirect();
-                closeSidebar();
-              }}
-              isCollapsed={isCollapsed}
-            />
-            <SidebarItem 
-              icon={User} 
-              text="Minha conta" 
-              href="#" 
-              onClick={handleNavigation('account')}
-              isActive={currentPage === 'account'}
+            <div className="flex flex-col mt-10 space-y-6">
+              <SidebarItem
+                icon={Home}
+                text="Inicio"
+                href="#"
+                onClick={handleNavigation('dashboard')}
+                isActive={currentPage === 'dashboard'}
+                isCollapsed={isCollapsed}
+              />
+              <SidebarItem
+                icon={RefreshCcw}
+                text="Novo redirecionamento"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openCreateRedirect();
+                  closeSidebar();
+                }}
+                isCollapsed={isCollapsed}
+              />
+              {/* <SidebarItem
+                icon={User}
+                text="Minha conta"
+                href="#"
+                onClick={handleNavigation('account')}
+                isActive={currentPage === 'account'}
+                isCollapsed={isCollapsed}
+              /> */}
+            </div>
+          </div >
+          <div className="mb-10">
+            <LogoutButton
+              onClick={handleLogoutUser}
+              isLoading={isLoggingOut}
               isCollapsed={isCollapsed}
             />
           </div>
-          <LogoutButton
-            onClick={handleLogoutUser}
-            isLoading={isLoggingOut}
-            isCollapsed={isCollapsed}
-          />
         </div>
       </div>
     </>
