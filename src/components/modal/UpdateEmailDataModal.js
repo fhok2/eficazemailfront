@@ -51,7 +51,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
 
   const updateLocalStorage = () => {
     const storageData = JSON.parse(localStorage.getItem("emailData"));
-    console.log(storageData);
+   
     if (storageData && storageData.emails) {
       const updatedEmails = storageData.emails.map((emailItem) => {
         if (emailItem.address === email) {
