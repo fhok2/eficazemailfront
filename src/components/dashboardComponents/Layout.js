@@ -83,7 +83,7 @@ const Sidebar = ({ sidebarOpen, closeSidebar, currentPage, setCurrentPage, openC
           isCollapsed ? 'w-16' : 'w-64'
         }`}
       >
-        <div className="p-6 flex mt-10 flex-col justify-between h-screen">
+        <div className="p-6 flex mt-10 flex-col justify-between h-full">
           <div className="space-y-2">
             <button
               onClick={closeSidebar}
