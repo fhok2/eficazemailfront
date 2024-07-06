@@ -132,7 +132,7 @@ const LoginPage = () => {
   return (
     <>
       <AnimatedBackground />
-      <div className="min-h-screen flex flex-col justify-center items-center px-4 py-20 bg-transparent text-white relative z-10">
+      <div className=" flex flex-col justify-center items-center px-4 py-20 bg-transparent text-white relative z-10 min-h-screen">
         <animated.div className="w-full max-w-md" style={fadeIn}>
           <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
