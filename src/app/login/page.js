@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { ArrowRight, User, Mail, Phone, Lock } from 'lucide-react';
+import { ArrowRight, User, Mail, Phone, Lock, Loader } from 'lucide-react';
 import AnimatedBackground from "@/components/AnimatedBackground";
 import ResetPassword from "@/components/loginComponents/resetPassword";
 
@@ -84,8 +84,12 @@ const LoginPage = () => {
       setError(response.message);
     } else {
       window.location.href = "/dashboard";
+      setTimeout(() => {
+        window.location.reload();
+        setLoading(false);
+      }, 1000);
+
     }
-    setLoading(false);
   };
 
   const getIcon = (field) => {
@@ -163,8 +167,17 @@ const LoginPage = () => {
                 disabled={loading}
                 className="w-full py-3 px-4 bg-gradient-to-r from-teal-400 to-brand-light text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center"
               >
-                {loading ? "Carregando..." : isRegistering ? "Criar conta" : isEmailVerified ? "Entrar" : "Continuar"}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                {loading ? <div className="flex gap-3 items-center">
+                  <Loader className="h-6 w-6 animate-spin text-white"  />  
+                  Carregando ...
+                </div>: isRegistering ? "Criar conta" : isEmailVerified ? <div
+                className="flex items-center">
+                  Entrar
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" /></div> :  <div
+                className="flex items-center">
+                  Continuar
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" /></div>}
+                
               </Button>
             </animated.div>
           </animated.form>
