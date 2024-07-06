@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, CheckCircle, XCircle, RefreshCw, Plus } from "lucide-react";
+import { Mail, CheckCircle, XCircle, RefreshCw, Plus, Loader } from "lucide-react";
 import { fetchUserEmails } from "@/services/emailService";
 import EmailTable from "@/components/dashboardComponents/EmailTable";
 import Pagination from "@/components/dashboardComponents/Pagination";
@@ -13,6 +13,7 @@ function DashboardContent() {
   const { token, authChecked } = useAuthContext();
   const [emails, setEmails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isStatsLoading, setIsStatsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [emailStats, setEmailStats] = useState({
@@ -36,6 +37,7 @@ function DashboardContent() {
   const loadEmails = useCallback(async () => {
     if (token && authChecked) {
       setIsLoading(true);
+      setIsStatsLoading(true);
       try {
         const response = await fetchUserEmails(currentPage, limit);
         const newData = {
@@ -55,6 +57,7 @@ function DashboardContent() {
         console.error("Failed to fetch emails:", error);
       }
       setIsLoading(false);
+      setIsStatsLoading(false);
     }
   }, [token, authChecked, currentPage, limit, updateLocalStorage]);
 
@@ -69,6 +72,7 @@ function DashboardContent() {
         inactive: storedData.stats?.inativos || 0
       });
       setIsLoading(false);
+      setIsStatsLoading(false);
     } else {
       loadEmails();
     }
@@ -96,6 +100,28 @@ function DashboardContent() {
     visible: { opacity: 1, y: 0 },
   };
 
+  const renderStatCard = (title, value, icon, bgColor) => (
+    <motion.div variants={cardVariants}>
+      <Card className="overflow-hidden">
+        <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${bgColor} text-primary-foreground`}>
+          <CardTitle className="text-sm font-medium">
+            {title}
+          </CardTitle>
+          {icon}
+        </CardHeader>
+        <CardContent className="pt-4">
+          {isStatsLoading ? (
+            <div className="flex justify-center items-center h-8">
+              <Loader className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="text-2xl font-bold">{value}</div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+
   return (
     <div className="space-y-4">
       <motion.div
@@ -106,45 +132,9 @@ function DashboardContent() {
           visible: { transition: { staggerChildren: 0.1 } },
         }}
       >
-        <motion.div variants={cardVariants}>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-primary text-primary-foreground">
-              <CardTitle className="text-sm font-medium">
-                Total Emails
-              </CardTitle>
-              <Mail className="h-4 w-4" />
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="text-2xl font-bold">{emailStats.total}</div>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div variants={cardVariants}>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-green-500 text-white">
-              <CardTitle className="text-sm font-medium">
-                Emails Ativos
-              </CardTitle>
-              <CheckCircle className="h-4 w-4" />
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="text-2xl font-bold">{emailStats.active}</div>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div variants={cardVariants}>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-yellow-500 text-white">
-              <CardTitle className="text-sm font-medium">
-                Emails Inativos
-              </CardTitle>
-              <XCircle className="h-4 w-4" />
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="text-2xl font-bold">{emailStats.inactive}</div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {renderStatCard("Total Emails", emailStats.total, <Mail className="h-4 w-4" />, "bg-primary")}
+        {renderStatCard("Emails Ativos", emailStats.active, <CheckCircle className="h-4 w-4" />, "bg-green-500")}
+        {renderStatCard("Emails Inativos", emailStats.inactive, <XCircle className="h-4 w-4" />, "bg-yellow-500")}
       </motion.div>
 
       <motion.div

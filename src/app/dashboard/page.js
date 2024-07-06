@@ -19,18 +19,20 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
-      <Layout>
-        {(currentPage) => {
-          switch (currentPage) {
-            case 'dashboard':
-              return <DashboardContent openCreateRedirect={openCreateRedirect} />;
-            case 'account':
-              return <div>Account Component</div>; // Replace with actual component
-            default:
-              return <DashboardContent openCreateRedirect={openCreateRedirect} />;
-          }
-        }}
-      </Layout>
+       <div className="min-h-screen flex flex-col justify-center  py-20 bg-transparent text-white relative z-10">
+        <Layout>
+          {(currentPage) => {
+            switch (currentPage) {
+              case 'dashboard':
+                return <DashboardContent openCreateRedirect={openCreateRedirect} />;
+              case 'account':
+                return <div>Account Component</div>; // Replace with actual component
+              default:
+                return <DashboardContent openCreateRedirect={openCreateRedirect} />;
+            }
+          }}
+        </Layout>
+      </div>
       {isCreateRedirectOpen && <CreateRedirect isOpen={isCreateRedirectOpen} onClose={closeCreateRedirect} />}
     </ProtectedRoute>
   );

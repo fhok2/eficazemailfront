@@ -22,7 +22,7 @@ const NewFooter = () => {
       variants={fadeIn} 
       className="bg-transparent text-secondary py-6 text-center h-32 flex flex-col items-center justify-center border-t border-gray-700"
     >
-      <h4 className="text-white mb-4">Links Rápidos</h4>
+   
       <div className="flex justify-center space-x-8 mb-4">
         {links.map((link, index) => (
           <Link key={index} href={link.href} passHref>

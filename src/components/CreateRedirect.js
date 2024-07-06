@@ -73,20 +73,24 @@ const CreateRedirect = ({ isOpen, onClose }) => {
 
     try {
       const finalCustomName = `${customName}@eficaz.email`;
-
+  
       const response = await forwardEmail({
         userEmail: emailInput,
         customName: finalCustomName,
         purpose: finalidade,
       });
-
+  
+      
+  
       const emailData = JSON.parse(localStorage.getItem("emailData")) || {
-        emails: [],
+        data: [],
         pagination: {},
+        stats: {}
       };
+  
       const newEmailData = {
-        emails: [
-          ...emailData.emails,
+        data: [
+          ...emailData.data,
           {
             address: response.data.address,
             forwarding: emailInput,
@@ -98,8 +102,15 @@ const CreateRedirect = ({ isOpen, onClose }) => {
           ...emailData.pagination,
           totalEmails: (emailData.pagination.totalEmails || 0) + 1,
         },
+        stats: {
+          ...emailData.stats,
+          total: (emailData.stats.total || 0) + 1,
+          ativos: (emailData.stats.ativos || 0) + 1,
+        }
       };
-
+  
+      
+  
       localStorage.setItem("emailData", JSON.stringify(newEmailData));
       window.dispatchEvent(new Event("emailDataUpdated"));
 
@@ -113,6 +124,7 @@ const CreateRedirect = ({ isOpen, onClose }) => {
       setModalType("success");
       setIsModalOpen(true);
     } catch (error) {
+      console.error(error);
       setError(error.response?.data?.message || "Ocorreu um erro");
       setErrorCode(error.response?.status || null);
       setModalType("error");

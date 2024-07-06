@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
         <main className='w-full'>
           {children}
         </main>
-        <footer className="bg-transparent text-secondary py-6 text-center h-20 z-20 relative">
+        <footer className="bg-transparent text-secondary py-6 text-center h-20  relative">
         <Footer />
       </footer>
       </body>

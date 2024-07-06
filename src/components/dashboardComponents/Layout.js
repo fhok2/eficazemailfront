@@ -208,7 +208,7 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900">
+    <div className="flex flex-col min-h-screen bg-transparent">
       <Navbar toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
       <div className="flex flex-grow overflow-hidden">
         <Sidebar 
@@ -219,7 +219,7 @@ const Layout = ({ children }) => {
           openCreateRedirect={openCreateRedirect}
           isCollapsed={isCollapsed}
         />
-        <main className={`flex-1 mt-16 p-6 overflow-x-hidden overflow-y-auto transition-all duration-300
+        <main className={`flex-1  p-6 overflow-x-hidden overflow-y-auto transition-all duration-300
           ${sidebarOpen ? (isCollapsed ? 'lg:ml-16' : 'lg:ml-64') : 'lg:ml-0'}`}>
           <div className="max-w-full">
             {children(currentPage)}
