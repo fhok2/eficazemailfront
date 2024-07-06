@@ -80,7 +80,7 @@ const ResetPassword = ({ isVisible, onClose, initialEmail }) => {
     }
     setLoading(true);
     const baseUrl = window.location.origin;
-   
+
     try {
       const response = await requestPasswordReset(email, baseUrl);
       if (response.error) {
@@ -95,7 +95,8 @@ const ResetPassword = ({ isVisible, onClose, initialEmail }) => {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.preventDefault();
     setIsModalVisible(false);
     setTimeout(() => {
       onClose();

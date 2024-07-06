@@ -3,69 +3,58 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, Shield, Settings, ArrowRight } from 'lucide-react';
 
+
+
 const TypingEffect = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showCursor, setShowCursor] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
   const sequence = [
     "Proteja-se contra spam e vazamento de dados.",
     "Gerencie facilmente seus e-mails no dashboard.",
     "Crie múltiplos e-mails de redirecionamento.",
     "Identifique a origem de cada e-mail com marcações personalizadas.",
   ];
-  const fullText = sequence[currentIndex];
-  const [text, setText] = useState("");
+
+  const [index, setIndex] = useState(0);
+  const [text, setText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    let interval;
+    const currentText = sequence[index];
+    const typingSpeed = isDeleting ? 50 : 100;
+    const pauseDuration = 4000;
 
-    const startDeletion = () => {
-      setIsDeleting(true);
-      setShowCursor(false);
-    };
-
-    if (!isDeleting) {
-      interval = setInterval(() => {
-        setText((prev) =>
-          prev.length === fullText.length ? prev : prev + fullText[prev.length]
-        );
-        if (text.length === fullText.length) {
-          setTimeout(startDeletion, 4000);
-        }
-      }, 100);
+    if (!isDeleting && text === currentText) {
+      setTimeout(() => setIsDeleting(true), pauseDuration);
+    } else if (isDeleting && text === '') {
+      setIsDeleting(false);
+      setIndex((prevIndex) => (prevIndex + 1) % sequence.length);
     } else {
-      interval = setInterval(() => {
-        setText((prev) => prev.slice(0, prev.length - 1));
-        if (text.length === 0) {
-          setIsDeleting(false);
-          setCurrentIndex((prevIndex) =>
-            prevIndex === sequence.length - 1 ? 0 : prevIndex + 1
-          );
-          setShowCursor(true);
-        }
-      }, 100);
-    }
+      const timer = setTimeout(() => {
+        setText((prevText) => 
+          isDeleting 
+            ? prevText.slice(0, -1)
+            : currentText.slice(0, prevText.length + 1)
+        );
+      }, typingSpeed);
 
-    return () => clearInterval(interval);
-  }, [currentIndex, isDeleting, fullText, text, sequence.length]);
+      return () => clearTimeout(timer);
+    }
+  }, [index, isDeleting, text, sequence]);
 
   return (
     <div className="my-4 h-16 text-center text-sm text-white sm:mt-10 sm:text-left sm:text-sm md:my-8 md:h-auto lg:my-12">
       <p style={{ fontSize: "14px", lineHeight: "20px" }}>
-        <span className="text-white md:text-sm text-xs">{text}</span>
-        {showCursor && (
-          <span className="blinking-cursor" style={{ height: "14px" }}>
-            |
-          </span>
-        )}
+        <span className="text-[#d1d5db] md:text-sm text-xs">{text}</span>
+        <span className="blinking-cursor" style={{ height: "14px" }}>|</span>
       </p>
     </div>
   );
 };
 
+
+
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex w-full flex-col items-center justify-center px-4 py-20 mx-auto bg-transparent text-white overflow-hidden">
+    <section className="relative  flex w-full flex-col items-center justify-center px-4 py-20 mx-auto bg-transparent text-white overflow-hidden h-full ">
   
       
       <div className="relative z-10 flex flex-col items-center justify-center max-w-4xl mx-auto text-center">

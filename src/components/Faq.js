@@ -1,34 +1,57 @@
 'use client'
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useRef } from 'react';
 
 const FAQItem = ({ question, answer, isOpen, toggleOpen }) => {
   return (
-    <div className="border-b border-gray-700 last:border-b-0">
-      <button
+    <motion.div
+      className="border-b border-gray-700 last:border-b-0"
+      initial={false}
+    >
+      <motion.button
         className="flex justify-between items-center w-full py-4 text-left focus:outline-none"
         onClick={toggleOpen}
       >
         <span className="text-lg font-semibold text-white">{question}</span>
-        {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-brand-light" />
-        ) : (
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <ChevronDown className="w-5 h-5 text-brand-light" />
+        </motion.div>
+      </motion.button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            variants={{
+              open: { opacity: 1, height: "auto" },
+              collapsed: { opacity: 0, height: 0 }
+            }}
+            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+          >
+            <motion.p
+              variants={{ collapsed: { scale: 0.8 }, open: { scale: 1 } }}
+              transition={{ duration: 0.4 }}
+              className="py-4 text-gray-300"
+            >
+              {answer}
+            </motion.p>
+          </motion.div>
         )}
-      </button>
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <p className="py-4 text-gray-300">{answer}</p>
-      </div>
-    </div>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
 const FAQ = () => {
   const [openItems, setOpenItems] = useState({});
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   const faqData = [
     {
@@ -77,29 +100,58 @@ const FAQ = () => {
   };
 
   return (
-    <div className='w-full'>
-      <div 
-      id='faq'
-      className="w-full max-w-6xl mx-auto bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+    <div className='w-full h-full z-40 mt-20 '>
+      <motion.div 
+        ref={ref}
+        id='faq'
+        className="w-full max-w-6xl mx-auto bg-gray-800 rounded-lg shadow-xl overflow-hidden"
+        initial={{ opacity: 0, y: 40 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="p-6">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <motion.h2 
+            className="text-3xl font-bold text-center mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
               Perguntas Frequentes
             </span>
-          </h2>
-          <div className="space-y-4">
+          </motion.h2>
+          <motion.div 
+            className="space-y-4"
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
             {faqData.map((item, index) => (
-              <FAQItem
+              <motion.div
                 key={index}
-                question={item.question}
-                answer={item.answer}
-                isOpen={openItems[index] || false}
-                toggleOpen={() => toggleItem(index)}
-              />
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <FAQItem
+                  question={item.question}
+                  answer={item.answer}
+                  isOpen={openItems[index] || false}
+                  toggleOpen={() => toggleItem(index)}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

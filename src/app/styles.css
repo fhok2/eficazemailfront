@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 @layer utilities {
+  
   .responsive-heading {
     @apply text-[2.9rem] leading-[2.5rem] font-bold tracking-[-0.04rem] text-transparent drop-shadow-sm;
 

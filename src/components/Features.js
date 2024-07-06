@@ -46,7 +46,7 @@ const EficazMailFeatures = () => {
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-transparent text-white overflow-hidden relative">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-transparent text-white overflow-hidden h-full relative ">
     <div className="max-w-7xl mx-auto">
       <h2 className="text-4xl sm:text-5xl font-bold mb-12 text-center animate-fade-in-up">
         <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">

@@ -44,7 +44,7 @@ const MenuToggle = ({ toggle, isOpen }) => (
 const Menu = ({ closeMenu }) => (
   <nav className="fixed top-0 right-0 bottom-0 w-80 bg-accent pt-24 transform translate-x-full will-change-transform transition-transform duration-300 z-40 bg-teal-600">
     <ul className="flex flex-col gap-2.5 p-4">
-      <Link href="#plain">
+      <Link href="/#plain">
         <li
           onClick={() => closeMenu()}
           className="text-background block font-bold text-4xl p-10 transform will-change-transform opacity-0 scale-50 blur-md
@@ -54,7 +54,7 @@ const Menu = ({ closeMenu }) => (
           Planos
         </li>
       </Link>
-      <Link href="#faq">
+      <Link href="/#faq">
         <li
           onClick={() => closeMenu()}
           className="text-background block font-bold text-4xl p-10 transform will-change-transform opacity-0 scale-50 blur-md"

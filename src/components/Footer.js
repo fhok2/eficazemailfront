@@ -1,11 +1,46 @@
 import React from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
-const Footer = () => {
+const NewFooter = () => {
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 1 } },
+  };
+
+  const links = [
+    { label: "Login", href: "/dashboard" },
+    { label: "Política de Privacidade", href: "/privacy-policy" },
+    { label: "Termos de Uso", href: "/terms-of-service" },
+    { label: "Planos", href: "/#plain" },
+    { label: "FAQ", href: "/#faq" }
+  ];
+
   return (
-    <footer className=" bg-custom-bg text-secondary py-6 text-center z-40 h-20">
-      <p>© 2024 EficazMail. All rights reserved.</p>
-    </footer>
+    <motion.footer 
+      initial="hidden" 
+      animate="visible" 
+      variants={fadeIn} 
+      className="bg-transparent text-secondary py-6 text-center h-32 flex flex-col items-center justify-center border-t border-gray-700"
+    >
+      <h4 className="text-white mb-4">Links Rápidos</h4>
+      <div className="flex justify-center space-x-8 mb-4">
+        {links.map((link, index) => (
+          <Link key={index} href={link.href} passHref>
+            <motion.span 
+              whileHover={{ scale: 1.1, color: "#ffffff" }}
+              className="text-gray-300 hover:text-white transition-colors duration-200"
+            >
+              {link.label}
+            </motion.span>
+          </Link>
+        ))}
+      </div>
+      <p className="text-gray-300 hover:text-white transition-colors duration-200">
+        © 2024 EficazMail. All rights reserved.
+      </p>
+    </motion.footer>
   );
 };
 
-export default Footer;
+export default NewFooter;
