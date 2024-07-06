@@ -1,10 +1,10 @@
 # Use uma imagem base Node.js oficial
 FROM node:18
 
-# Defina o diretório de trabalho
+# Defina o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-# Copie o package.json e package-lock.json para o diretório de trabalho
+# Copie o package.json e o package-lock.json para o diretório de trabalho
 COPY package*.json ./
 
 # Instale as dependências com --legacy-peer-deps
