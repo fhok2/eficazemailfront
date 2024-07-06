@@ -9,10 +9,9 @@ const NewFooter = () => {
   };
 
   const links = [
-    { label: "Login", href: "/dashboard" },
+    
     { label: "Política de Privacidade", href: "/privacy-policy" },
     { label: "Termos de Uso", href: "/terms-of-service" },
-    { label: "Planos", href: "/#plain" },
     { label: "FAQ", href: "/#faq" }
   ];
 
