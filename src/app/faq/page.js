@@ -1,6 +1,7 @@
 import ReusableHeading from "@/components/component/ReusableComponents/ReusableHeading";
 import ReusableParagraph from "@/components/component/ReusableComponents/ReusableParagraph";
 import FAQAccordion from "@/components/FAQAccordion";
+
 import React from "react";
 
 const faqItems = [
