@@ -28,7 +28,7 @@ const LoginPage = () => {
   const [showPhoneError, setShowPhoneError] = useState(false);
 
   const { handleLogin, handleRegister, handleCheckEmail, redirectToDashboardIfAuthenticated } = useAuthContext();
-
+  const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] = useState(false);
   useEffect(() => {
     redirectToDashboardIfAuthenticated();
   }, [redirectToDashboardIfAuthenticated]);
@@ -249,13 +249,13 @@ const LoginPage = () => {
             </animated.div>
           </animated.form>
           <animated.div className="mt-6 text-center" style={fadeIn}>
-            {!isRegistering && isEmailVerified && (
-              <button
-                onClick={() => setModalVisible(true)}
-                className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none"
-              >
-                Esqueceu sua senha?
-              </button>
+          {!isRegistering && isEmailVerified && (
+            <button
+              onClick={() => setIsResetPasswordModalVisible(true)}
+              className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none"
+            >
+              Esqueceu sua senha?
+            </button>
             )}
             {isRegistering && (
               <p className="text-sm font-medium text-gray-400 mt-4">
@@ -274,8 +274,13 @@ const LoginPage = () => {
             )}
           </animated.div>
         </animated.div>
-        {isModalVisible && <ResetPassword onClose={() => setModalVisible(false)} />}
+        
       </div>
+      <ResetPassword 
+        isVisible={isResetPasswordModalVisible}
+        onClose={() => setIsResetPasswordModalVisible(false)}
+        initialEmail={formData.email}
+      />
     </>
   );
 };
