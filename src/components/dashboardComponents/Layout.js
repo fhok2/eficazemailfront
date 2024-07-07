@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, User, Home, RefreshCcw, LogOut, Menu, X } from 'lucide-react';
+import { Bell, User, Home, RefreshCcw, LogOut, Menu, X, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import CreateRedirect from "../CreateRedirect";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/contexts/AuthContext";
 import LogoutButton from './NewLogoutButton';
 import UserInfoModal from "../modal/UserInfoModal";
+import FeedbackModal from "../modal/FeedbackModal";
 
 // Custom CrownUser icon for pro users
 const CrownUser = ({ className }) => (
@@ -161,7 +162,7 @@ const Sidebar = ({ sidebarOpen, closeSidebar, currentPage, setCurrentPage, openC
 
 
 
-const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse, openUserInfo, userInfo }) => (
+const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse, openUserInfo, userInfo, openFeedbackModal }) => (
   <nav className="bg-gray-800 border-b border-gray-700 fixed top-0 left-0 w-full z-30">
     <div className="flex justify-between items-center px-4 lg:px-9 h-16">
       <div className="flex items-center">
@@ -172,7 +173,19 @@ const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse, openUserInfo, user
           {isCollapsed ? <Menu className="h-6 w-6" /> : <X className="h-6 w-6" />}
         </button>
       </div>
-      <div className="space-x-4 flex items-center">
+      <div className="space-x-8 flex items-center mr-9">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="text-gray-300 hover:text-white" onClick={openFeedbackModal}>
+                <MessageSquare className="h-6 w-6" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Feedback</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <button className="text-gray-300 hover:text-white">
           <Bell className="h-6 w-6" />
         </button>
@@ -197,7 +210,6 @@ const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse, openUserInfo, user
   </nav>
 );
 
-
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -205,6 +217,7 @@ const Layout = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   useEffect(() => {
     // Fetch user info from localStorage
@@ -239,6 +252,10 @@ const Layout = ({ children }) => {
 
   const openUserInfo = () => {
     setIsUserInfoModalOpen(true);
+  };
+
+  const openFeedbackModal = () => {
+    setIsFeedbackModalOpen(true);
   };
 
   useEffect(() => {
@@ -276,6 +293,7 @@ const Layout = ({ children }) => {
         toggleCollapse={toggleCollapse} 
         openUserInfo={openUserInfo}
         userInfo={userInfo}
+        openFeedbackModal={openFeedbackModal}
       />
       <div className="flex flex-grow overflow-hidden">
         <Sidebar 
@@ -296,10 +314,14 @@ const Layout = ({ children }) => {
       {renderCreateRedirect()}
       {userInfo && (
         <UserInfoModal
-        isOpen={isUserInfoModalOpen}
-        onClose={() => setIsUserInfoModalOpen(false)}
-      />
+          isOpen={isUserInfoModalOpen}
+          onClose={() => setIsUserInfoModalOpen(false)}
+        />
       )}
+      <FeedbackModal 
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+      />
     </div>
   );
 };

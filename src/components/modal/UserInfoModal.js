@@ -76,7 +76,7 @@ const UserInfoModal = ({ isOpen, onClose }) => {
             <User className="h-8 w-8 text-brand-light" />
           </animated.div>
           <h4 className="text-2xl text-white font-bold mb-3 text-center relative z-10">
-            Informações do Usuário
+            Sua conta
           </h4>
           <animated.div style={contentSpring} className="space-y-4 relative z-10">
             <div className="flex items-center space-x-3 text-gray-300">
