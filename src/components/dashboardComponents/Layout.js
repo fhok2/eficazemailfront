@@ -7,6 +7,29 @@ import CreateRedirect from "../CreateRedirect";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/contexts/AuthContext";
 import LogoutButton from './NewLogoutButton';
+import UserInfoModal from "../modal/UserInfoModal";
+
+// Custom CrownUser icon for pro users
+const CrownUser = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M19 7v4a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7" />
+    <path d="M12 21a2 2 0 0 1-2-2v-4h4v4a2 2 0 0 1-2 2z" />
+    <path d="M12 3a2 2 0 0 0-2 2v4h4V5a2 2 0 0 0-2-2z" />
+    <path d="m5 3 2 2-2 2" />
+    <path d="m19 3-2 2 2 2" />
+    <path d="M12 15h.01" />
+  </svg>
+);
+
 const SidebarItem = ({ icon: Icon, text, href, className, onClick, isLoading, isActive, isCollapsed }) => (
   <TooltipProvider>
     <Tooltip>
@@ -135,7 +158,10 @@ const Sidebar = ({ sidebarOpen, closeSidebar, currentPage, setCurrentPage, openC
 };
 
 
-const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse }) => (
+
+
+
+const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse, openUserInfo, userInfo }) => (
   <nav className="bg-gray-800 border-b border-gray-700 fixed top-0 left-0 w-full z-30">
     <div className="flex justify-between items-center px-4 lg:px-9 h-16">
       <div className="flex items-center">
@@ -146,23 +172,54 @@ const Navbar = ({ toggleSidebar, isCollapsed, toggleCollapse }) => (
           {isCollapsed ? <Menu className="h-6 w-6" /> : <X className="h-6 w-6" />}
         </button>
       </div>
-      <div className="space-x-4">
+      <div className="space-x-4 flex items-center">
         <button className="text-gray-300 hover:text-white">
           <Bell className="h-6 w-6" />
         </button>
-        <button className="text-gray-300 hover:text-white">
-          <User className="h-6 w-6" />
-        </button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="text-gray-300 hover:text-white relative" onClick={openUserInfo}>
+                {userInfo && userInfo.plan === "pro" ? (
+                  <CrownUser className="h-6 w-6 text-yellow-400" />
+                ) : (
+                  <User className="h-6 w-6" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{userInfo ? (userInfo.plan === "pro" ? "Pro Plan" : "Free Plan") : "Loading..."}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   </nav>
 );
+
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isCreateRedirectOpen, setIsCreateRedirectOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Fetch user info from localStorage
+    const storedUserInfo = {
+      email: localStorage.getItem('email') || '',
+      emailVerified: JSON.parse(localStorage.getItem('emailVerified') || 'false'),
+      name: localStorage.getItem('name') || '',
+      paymentDate: localStorage.getItem('paymentDate') || '',
+      permissions: JSON.parse(localStorage.getItem('permissions') || '[]'),
+      plan: localStorage.getItem('plan') || 'free',
+      role: localStorage.getItem('role') || '',
+      userId: localStorage.getItem('userId') || '',
+    };
+    setUserInfo(storedUserInfo);
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -178,6 +235,10 @@ const Layout = ({ children }) => {
 
   const openCreateRedirect = () => {
     setIsCreateRedirectOpen(true);
+  };
+
+  const openUserInfo = () => {
+    setIsUserInfoModalOpen(true);
   };
 
   useEffect(() => {
@@ -209,7 +270,13 @@ const Layout = ({ children }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-transparent">
-      <Navbar toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+      <Navbar 
+        toggleSidebar={toggleSidebar} 
+        isCollapsed={isCollapsed} 
+        toggleCollapse={toggleCollapse} 
+        openUserInfo={openUserInfo}
+        userInfo={userInfo}
+      />
       <div className="flex flex-grow overflow-hidden">
         <Sidebar 
           sidebarOpen={sidebarOpen} 
@@ -219,7 +286,7 @@ const Layout = ({ children }) => {
           openCreateRedirect={openCreateRedirect}
           isCollapsed={isCollapsed}
         />
-        <main className={`flex-1  p-6 overflow-x-hidden overflow-y-auto transition-all duration-300
+        <main className={`flex-1 p-6 overflow-x-hidden overflow-y-auto transition-all duration-300
           ${sidebarOpen ? (isCollapsed ? 'lg:ml-16' : 'lg:ml-64') : 'lg:ml-0'}`}>
           <div className="max-w-full">
             {children(currentPage)}
@@ -227,6 +294,12 @@ const Layout = ({ children }) => {
         </main>
       </div>
       {renderCreateRedirect()}
+      {userInfo && (
+        <UserInfoModal
+        isOpen={isUserInfoModalOpen}
+        onClose={() => setIsUserInfoModalOpen(false)}
+      />
+      )}
     </div>
   );
 };
