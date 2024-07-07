@@ -186,7 +186,7 @@ const CreateRedirect = ({ isOpen, onClose }) => {
                       onChange={(e) =>
                         setCustomName(e.target.value.toLowerCase())
                       }
-                      disabled={generateRandomName}
+                      
                     />
                     <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-secondary dark:text-gray-300">
                       @eficaz.email
