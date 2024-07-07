@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { ArrowRight, User, Mail, Phone, Lock, Loader } from 'lucide-react';
+import { ArrowRight, User, Mail, Phone, Lock, Loader, AlertCircle } from 'lucide-react';
 import AnimatedBackground from "@/components/AnimatedBackground";
 import ResetPassword from "@/components/loginComponents/resetPassword";
+import DDDs from "@/enums/ddds";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -17,11 +18,14 @@ const LoginPage = () => {
     phone: "",
   });
   const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [showPhoneError, setShowPhoneError] = useState(false);
 
   const { handleLogin, handleRegister, handleCheckEmail, redirectToDashboardIfAuthenticated } = useAuthContext();
 
@@ -41,12 +45,59 @@ const LoginPage = () => {
     config: { tension: 300, friction: 10 },
   });
 
+  const nameRegex = /^[a-zA-ZÀ-ÖØ-öø-ÿ]+(\s+[a-zA-ZÀ-ÖØ-öø-ÿ]+)+$/;
+
+  const handleNameBlur = (e) => {
+    const { value } = e.target;
+    const trimmedValue = value.trim();
+    setFormData(prev => ({ ...prev, name: trimmedValue }));
+    validateName(trimmedValue);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const trimmedValue = name === 'email' ? value.trim().toLowerCase() : value.toLowerCase();
-    setFormData(prev => ({ ...prev, [name]: trimmedValue }));
+    let finalValue = value;
+  
+    if (name === 'email') {
+      finalValue = value.trim().toLowerCase();
+    } else if (name === 'name') {
+      validateName(value);
+    } else if (name === 'phone') {
+      finalValue = value.replace(/\D/g, '').slice(0, 11);
+      validatePhone(finalValue);
+    } else {
+      finalValue = value.trim();
+    }
+  
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
     setError("");
     if (name === "email") setIsEmailVerified(false);
+  };
+
+  const validateName = (name) => {
+    if (!nameRegex.test(name)) {
+      setNameError("Por favor, digite nome e sobrenome válidos");
+    } else {
+      setNameError("");
+    }
+  };
+
+  const validatePhone = (phone) => {
+    if (phone.length !== 11) {
+      setPhoneError("Ops! Parece que seu número está incompleto. Lembre-se: são 11 dígitos, incluindo o DDD.");
+    } else {
+      const ddd = phone.slice(0, 2);
+      if (!DDDs.includes(ddd)) {
+        setPhoneError("Hmm, esse DDD não parece familiar. Que tal conferir se digitou corretamente?");
+      } else {
+        setPhoneError("");
+      }
+    }
+  };
+  
+  const handlePhoneBlur = () => {
+    validatePhone(formData.phone);
+    setShowPhoneError(true);
   };
 
   const checkEmail = async (e) => {
@@ -71,6 +122,10 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isRegistering && (nameError || phoneError)) {
+      setError("Ops! Parece que temos alguns detalhes para ajustar. Vamos dar uma olhada nos campos destacados?");
+      return;
+    }
     setLoading(true);
     let response;
 
@@ -88,7 +143,6 @@ const LoginPage = () => {
         window.location.reload();
         setLoading(false);
       }, 1000);
-
     }
   };
 
@@ -103,7 +157,7 @@ const LoginPage = () => {
   };
 
   const renderFormField = (field, type = "text") => (
-    <div key={field} className="form-group relative">
+    <div key={field} className="form-group relative mb-6">
       <Label 
         className={`absolute left-10 text-sm font-semibold transition-all duration-300 ${
           focusedField === field || formData[field]
@@ -112,7 +166,7 @@ const LoginPage = () => {
         }`}
         htmlFor={field}
       >
-        {field.charAt(0).toUpperCase() + field.slice(1)}
+        {field === 'name' ? 'Nome e Sobrenome' : field === 'phone' ? 'Telefone' : field.charAt(0).toUpperCase() + field.slice(1)}
       </Label>
       <div className="relative">
         <Input
@@ -122,7 +176,7 @@ const LoginPage = () => {
           value={formData[field]}
           onChange={handleInputChange}
           onFocus={() => setFocusedField(field)}
-          onBlur={() => setFocusedField(null)}
+          onBlur={field === 'name' ? handleNameBlur : field === 'phone' ? handlePhoneBlur : () => setFocusedField(null)}
           required
           className="mt-1 bg-gray-800 bg-opacity-50 text-white border-gray-700 rounded-lg py-8 pl-12 w-full focus:ring-2 focus:ring-brand-light transition-all duration-300 placeholder-transparent"
         />
@@ -130,13 +184,27 @@ const LoginPage = () => {
           {getIcon(field)}
         </span>
       </div>
+      {field === 'name' && nameError && (
+        <p className="text-red-500 text-xs mt-1">{nameError}</p>
+      )}
+      {field === 'phone' && showPhoneError && phoneError && (
+        <animated.div 
+          style={fadeIn} 
+          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mt-2"
+        >
+          <div className="flex items-center">
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <p>{phoneError}</p>
+          </div>
+        </animated.div>
+      )}
     </div>
   );
 
   return (
     <>
       <AnimatedBackground />
-      <div className=" flex flex-col justify-center items-center px-4 py-20 bg-transparent text-white relative z-10 min-h-screen">
+      <div className="flex flex-col justify-center items-center px-4 py-20 bg-transparent text-white relative z-10 min-h-screen">
         <animated.div className="w-full max-w-md" style={fadeIn}>
           <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
@@ -164,7 +232,7 @@ const LoginPage = () => {
             <animated.div style={buttonAnimation}>
               <Button 
                 type="submit"
-                disabled={loading}
+                disabled={loading || (isRegistering && (nameError || phoneError))}
                 className="w-full py-3 px-4 bg-gradient-to-r from-teal-400 to-brand-light text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center"
               >
                 {loading ? <div className="flex gap-3 items-center">
@@ -177,42 +245,36 @@ const LoginPage = () => {
                 className="flex items-center">
                   Continuar
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" /></div>}
-                
               </Button>
             </animated.div>
           </animated.form>
-          {isEmailVerified && (
-            <p className="mt-6 text-sm text-center text-gray-300">
-              Esqueceu a senha?{" "}
+          <animated.div className="mt-6 text-center" style={fadeIn}>
+            {!isRegistering && isEmailVerified && (
               <button
                 onClick={() => setModalVisible(true)}
-                className="text-teal-200 hover:text-teal-400 underline font-medium transition-colors duration-150"
+                className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none"
               >
-                Enviar nova senha
+                Esqueceu sua senha?
               </button>
-            </p>
-          )}
-          {isRegistering && (
-            <p className="mt-4 text-sm text-center text-gray-400">
-              Já tem uma conta?{" "}
-              <button
-                onClick={() => {
-                  setIsRegistering(false);
-                  setIsEmailVerified(false);
-                  setFormData({email: "", password: "", name: "", phone: ""});
-                }}
-                className="text-teal-300 hover:text-teal-200 underline font-medium transition-colors duration-150"
-              >
-                Faça login
-              </button>
-            </p>
-          )}
+            )}
+            {isRegistering && (
+              <p className="text-sm font-medium text-gray-400 mt-4">
+                Já possui uma conta?{" "}
+                <button
+                  onClick={() => {
+                    setIsRegistering(false);
+                    setIsEmailVerified(false);
+                    setFormData({ email: "", password: "", name: "", phone: "" });
+                  }}
+                  className="text-teal-300 hover:text-teal-400 focus:outline-none font-semibold"
+                >
+                  Entrar
+                </button>
+              </p>
+            )}
+          </animated.div>
         </animated.div>
-        <ResetPassword
-          isVisible={isModalVisible}
-          onClose={() => setModalVisible(false)}
-          initialEmail={formData.email}
-        />
+        {isModalVisible && <ResetPassword onClose={() => setModalVisible(false)} />}
       </div>
     </>
   );
