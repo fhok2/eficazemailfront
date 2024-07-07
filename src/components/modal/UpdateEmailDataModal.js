@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Edit2, Mail } from 'lucide-react';
 import { useSpring, animated, config } from 'react-spring';
 
-const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
+const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose, onCloseClick }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [redirectMail, setRedirectMail] = useState(redirectmail);
@@ -44,9 +44,12 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
     config: { ...config.wobbly, tension: 300, friction: 10 },
   });
 
-  const handleModalClose = () => {
+  const handleModalClose = (e) => {
+    e.preventDefault(); 
     setIsVisible(false);
-    setTimeout(onClose, 300);
+    setTimeout(() => {
+      onCloseClick(); 
+    }, 300);
   };
 
   const updateLocalStorage = () => {
@@ -82,7 +85,7 @@ const UpdateEmailDataModal = ({ redirectmail, email, onClose, purpose }) => {
       });
      
       updateLocalStorage();
-      handleModalClose();
+      onClose();
     } catch (error) {
       console.error("Error updating email forward:", error);
     } finally {

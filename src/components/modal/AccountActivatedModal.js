@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Info } from 'lucide-react';
 import { useSpring, animated, config } from "react-spring";
 
-const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
+const AccountActivatedModal = ({ redirectmail, email, onClose,onCloseClick }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { activateEmailForward } = useMail();
@@ -31,9 +31,12 @@ const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
     config: { ...config.wobbly, tension: 300, friction: 10 },
   });
 
-  const handleModalClose = () => {
+  const handleModalClose = (e) => {
+    e.preventDefault(); 
     setIsVisible(false);
-    setTimeout(onClose, 300);
+    setTimeout(() => {
+      onCloseClick(); 
+    }, 300);
   };
 
   const updateLocalStorage = () => {
@@ -57,7 +60,7 @@ const AccountActivatedModal = ({ redirectmail, email, onClose }) => {
     try {
       await activateEmailForward({ email, forwardTo: redirectmail });
       updateLocalStorage();
-      handleModalClose();
+      onClose();
     } catch (error) {
       console.error("Error activating email forward:", error);
     } finally {

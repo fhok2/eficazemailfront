@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle } from 'lucide-react';
 import { useSpring, animated, config } from "react-spring";
 
-const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
+const DeactivateAccountModal = ({ redirectmail, email, onClose,onCloseClick }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const { cancelEmailForward } = useMail();
@@ -32,9 +32,12 @@ const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
     config: { ...config.wobbly, tension: 300, friction: 10 },
   });
 
-  const handleModalClose = () => {
+  const handleModalClose = (e) => {
+    e.preventDefault(); 
     setIsVisible(false);
-    setTimeout(onClose, 300);
+    setTimeout(() => {
+      onCloseClick(); 
+    }, 300);
   };
 
   const updateLocalStorage = () => {
@@ -58,7 +61,7 @@ const DeactivateAccountModal = ({ redirectmail, email, onClose }) => {
     try {
       await cancelEmailForward({ email, forwardTo: redirectmail });
       updateLocalStorage();
-      handleModalClose();
+      onClose();
     } catch (error) {
       console.error("Error cancelling email forward:", error);
     } finally {

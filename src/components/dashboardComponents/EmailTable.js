@@ -133,6 +133,13 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
     loadEmails();
   };
 
+  const handleCloseClick = () => {
+    setIsDeactivateModalOpen(false);
+    setIsActivateModalOpen(false);
+    setIsUpdateModalOpen(false);
+    setSelectedEmail(null);
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -190,6 +197,7 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
           redirectmail={selectedEmail.forwarding}
           email={selectedEmail.address}
           onClose={handleCloseModals}
+          onCloseClick={handleCloseClick}
         />
       )}
       {isActivateModalOpen && selectedEmail && (
@@ -197,15 +205,17 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
           redirectmail={selectedEmail.forwarding}
           email={selectedEmail.address}
           onClose={handleCloseModals}
+          onCloseClick={handleCloseClick}
         />
       )}
       {isUpdateModalOpen && selectedEmail && (
-        <UpdateEmailDataModal
-          redirectmail={selectedEmail.forwarding}
-          email={selectedEmail.address}
-          onClose={handleCloseModals}
-          purpose={selectedEmail.purpose}
-        />
+         <UpdateEmailDataModal
+         redirectmail={selectedEmail.forwarding}
+         email={selectedEmail.address}
+         onClose={handleCloseModals}
+         onCloseClick={handleCloseClick}
+         purpose={selectedEmail.purpose}
+       />
       )}
     </motion.div>
   );
