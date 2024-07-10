@@ -28,7 +28,7 @@ const ForgotPasswordPage = () => {
         setError(data.message); // Exibe mensagem de erro da API
       }
     } catch (error) {
-      console.error('Erro ao enviar solicitação:', error);
+    
       setError('Ocorreu um erro. Tente novamente mais tarde.');
     }
   };

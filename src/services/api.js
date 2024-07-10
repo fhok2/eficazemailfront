@@ -9,11 +9,19 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 
+// Lista de rotas que não requerem autenticação
+const publicRoutes = ['/auth/login', '/auth/register', '/emails/validar-email', '/auth/refreshToken', '/emails/enviar-token-verificacao','/auth/google-login'];
+
 axiosInstance.interceptors.request.use(
   (config) => {
-    const authToken = localStorage.getItem("accessToken");
-    if (authToken) {
-      config.headers["Authorization"] = `Bearer ${authToken}`;
+    // Verifica se a rota atual está na lista de rotas públicas
+    const isPublicRoute = publicRoutes.some(route => config.url.includes(route));
+    
+    if (!isPublicRoute) {
+      const authToken = localStorage.getItem("accessToken");
+      if (authToken) {
+        config.headers["Authorization"] = `Bearer ${authToken}`;
+      }
     }
     return config;
   },
@@ -25,7 +33,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     console.error('API Error:', error.response?.data || error.message);
 
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !publicRoutes.some(route => error.config.url.includes(route))) {
       console.warn('Access token expired. Attempting to refresh...');
       const refreshed = await refreshToken();
       if (refreshed) {

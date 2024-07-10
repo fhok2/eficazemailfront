@@ -1,6 +1,6 @@
-// authService.js
-
 import api from './api';
+import { signInWithGoogle, signUpWithEmailAndPassword, signInWithEmail } from './firebase';
+import { GoogleAuthProvider } from 'firebase/auth';
 
 const handleApiError = (error) => ({
   error: true,
@@ -12,20 +12,55 @@ const apiCall = async (method, endpoint, data = {}, config = {}) => {
     const response = await api[method](endpoint, data, config);
     return response.data;
   } catch (error) {
+    console.error('API Error:', error);
     return handleApiError(error);
   }
 };
 
 export const login = async (credentials) => {
-  const response = await apiCall('post', '/auth/login', credentials);
-  if (!response.error) {
-    localStorage.setItem('accessToken', response.token);
-    localStorage.setItem('refreshToken', response.refreshToken);
-    localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
+  try {
+       
+    const response = await apiCall('post', '/auth/login', { email: credentials.email, password: credentials.password});
+    if (!response.error) {
+      console.log(response);
+      localStorage.setItem('accessToken', response.token);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
+    }
+    return response;
+  } catch (error) {
+    console.error('Login error:', error);
+    return handleApiError(error);
   }
-  return response;
 };
 
+export const loginWithGoogle = async () => {
+  try {
+    const result = await signInWithGoogle();
+    if (result.error) {
+      return { error: true, message: result.error };
+    }
+
+    if (!result.user || !result.idToken) {
+      return { error: true, message: 'No user or token returned from Google sign-in' };
+    }
+
+    const response = await apiCall('post', '/auth/google-login', { 
+      user: result.user,
+      idToken: result.idToken
+    });
+    console.log(response);
+    if (!response.error) {
+      localStorage.setItem('accessToken', response.token);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('dashboardData', JSON.stringify(response.user));
+     
+    }
+    return response;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
 export const refreshTokenApiCall = async (refreshToken) => {
   const response = await apiCall('post', '/auth/refreshToken', { refreshToken });
   if (!response.error) {
@@ -40,15 +75,24 @@ export const refreshTokenApiCall = async (refreshToken) => {
 };
 
 export const register = async (userData) => {
-  const response = await apiCall('post', '/user/register', userData);
-  if (!response.error) {
-    localStorage.setItem('accessToken', response.token);
-    localStorage.setItem('refreshToken', response.refreshToken);
-    if (response.dashboardData) {
-      localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
+  try {
+    const { user, error } = await signUpWithEmailAndPassword(userData.email, userData.password);
+    if (error) {
+      return { error: true, message: error };
     }
+    const idToken = await user.getIdToken();
+    const response = await apiCall('post', '/user/register', { ...userData, idToken });
+    if (!response.error) {
+      localStorage.setItem('accessToken', response.token);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      if (response.dashboardData) {
+        localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
+      }
+    }
+    return response;
+  } catch (error) {
+    return handleApiError(error);
   }
-  return response;
 };
 
 export const logout = async () => {

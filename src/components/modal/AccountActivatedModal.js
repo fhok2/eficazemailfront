@@ -62,7 +62,7 @@ const AccountActivatedModal = ({ redirectmail, email, onClose,onCloseClick }) =>
       updateLocalStorage();
       onClose();
     } catch (error) {
-      console.error("Error activating email forward:", error);
+     
     } finally {
       setIsLoading(false);
     }

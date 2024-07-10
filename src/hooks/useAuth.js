@@ -1,8 +1,7 @@
 'use client';
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { login as loginService, refreshTokenApiCall, checkEmail ,resetPassword,requestPasswordReset, register as registerService } from '@/services/authService';
+import { login as loginService, refreshTokenApiCall, checkEmail, resetPassword, requestPasswordReset, register as registerService, loginWithGoogle } from '@/services/authService';
 import { useRouter } from 'next/navigation';
 
 export const useAuth = () => {
@@ -188,12 +187,57 @@ export const useAuth = () => {
     scheduleTokenRefresh();
   }, [token, scheduleTokenRefresh]);
 
-  const redirectToDashboardIfAuthenticated = useCallback(() => {
-    const storedToken = localStorage.getItem('accessToken');
-    if (storedToken && validateToken(storedToken)) {
-      router.push('/dashboard');
+  const handleGoogleSignIn = async () => {
+    try {
+      const response = await loginWithGoogle();
+      if (response.error) {
+        return { error: response.message };
+      } else {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('accessToken', response.token);
+          localStorage.setItem('refreshToken', response.refreshToken);
+        }
+        setToken(response.token);
+        setIsAuthenticated(true);
+        return { error: false };
+      }
+    } catch (error) {
+      return { error: error.message };
     }
-  }, [router, validateToken]);
+  };
+
+  const redirectToDashboardIfAuthenticated = useCallback(async () => {
+    const storedToken = localStorage.getItem('accessToken');
+    if (storedToken) {
+      if (validateToken(storedToken)) {
+        setToken(storedToken);
+        setIsAuthenticated(true);
+        router.push('/dashboard');
+      } else {
+        // Token expirado, tente refresh
+        const refreshed = await refreshAuthToken();
+        if (refreshed) {
+          const newToken = localStorage.getItem('accessToken');
+          setToken(newToken);
+          setIsAuthenticated(true);
+          router.push('/dashboard');
+        } else {
+          // Se o refresh falhar, limpe o token e redirecione para o login
+          localStorage.removeItem('accessToken');
+          setToken(null);
+          setIsAuthenticated(false);
+          router.push('/login');
+        }
+      }
+    }
+  }, [router, validateToken, refreshAuthToken]);
+
+  // const redirectToDashboardIfAuthenticated = useCallback(() => {
+  //   const storedToken = localStorage.getItem('accessToken');
+  //   if (storedToken && validateToken(storedToken)) {
+  //     router.push('/dashboard');
+  //   }
+  // }, [router, validateToken]);
 
 
   const handleRegister = async (userData) => {
@@ -256,6 +300,7 @@ export const useAuth = () => {
     handleRegister,
     handleNewPassword,
     isAuthenticated,
-    handlePasswordReset
+    handlePasswordReset,
+    handleGoogleSignIn
   };
 };

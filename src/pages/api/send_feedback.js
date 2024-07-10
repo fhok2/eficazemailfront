@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { name, email, feedback } = req.body;
-      console.log('dentro da api '+name, email, feedback);
+     
 
       // Create a Nodemailer transporter
       const transporter = nodemailer.createTransport({

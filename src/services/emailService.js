@@ -1,82 +1,76 @@
 import api from './api';
 import { jwtDecode } from 'jwt-decode';
 
+class ApiError extends Error {
+  constructor(message, statusCode, originalError) {
+    super(message);
+    this.name = 'ApiError';
+    this.statusCode = statusCode;
+    this.originalError = originalError;
+  }
+}
+
 const apiCall = async (apiFunction, ...args) => {
   try {
-    return await apiFunction(...args);
+    const response = await apiFunction(...args);
+    return response.data;
   } catch (error) {
     console.error('API call error:', error);
-    throw error;
+    const statusCode = error.response?.status || 500;
+    const message = error.response?.data?.message || error.message || 'Unknown error occurred';
+    throw new ApiError(message, statusCode, error);
   }
 };
 
-const forwardEmail = async (dataforwardEmail) => {
-  return apiCall(async () => {
-    let customName = dataforwardEmail.customName
-      ? dataforwardEmail.customName.replace(/@.*/, '')
-      : `${dataforwardEmail.userEmail.replace(/@.*/, '')}${Math.floor(Math.random() * 10000)}`;
+export const forwardEmail = async (dataforwardEmail) => {
+  let customName = dataforwardEmail.customName
+    ? dataforwardEmail.customName.replace(/@.*/, '')
+    : `${dataforwardEmail.userEmail.replace(/@.*/, '')}${Math.floor(Math.random() * 10000)}`;
 
-    const response = await api.post('/emails/direcionaremail', {
-      userEmail: dataforwardEmail.userEmail,
-      customName,
-      purpose: dataforwardEmail.purpose,
-    });
-
-    return response.data;
+  return apiCall(api.post, '/emails/direcionaremail', {
+    userEmail: dataforwardEmail.userEmail,
+    customName,
+    purpose: dataforwardEmail.purpose,
   });
 };
 
-const createEmail = async (email, forwardTo) => {
-  return apiCall(async () => {
-    const response = await api.post('/email/create', { email, forwardTo });
-    return response.data;
-  });
+export const createEmail = async (email, forwardTo) => {
+  return apiCall(api.post, '/email/create', { email, forwardTo });
 };
 
-const cancelForward = async (dataMail) => {
-  return apiCall(async () => {
-    const response = await api.put(`/emails/cancelarencaminhamento/${dataMail.forwardTo}/${dataMail.email}`);
-    return response.data;
-  });
+export const cancelForward = async (dataMail) => {
+  return apiCall(api.put, `/emails/cancelarencaminhamento/${dataMail.forwardTo}/${dataMail.email}`);
 };
 
-const activateForward = async (dataMail) => {
-  return apiCall(async () => {
-    const response = await api.put(`/emails/reativarencaminhamento/${dataMail.forwardTo}/${dataMail.email}`);
-    return response.data;
-  });
+export const activateForward = async (dataMail) => {
+  return apiCall(api.put, `/emails/reativarencaminhamento/${dataMail.forwardTo}/${dataMail.email}`);
 };
 
-const fetchUserEmails = async (page = 1, limit = 10) => {
-  return apiCall(async () => {
-    const response = await api.get(`/user/listaremailusuario?page=${page}&limit=${limit}`);
-    return response.data;
-  });
+export const fetchUserEmails = async (page = 1, limit = 10) => {
+  return apiCall(api.get, `/user/listaremailusuario?page=${page}&limit=${limit}`);
 };
 
-const updateDataMail = async (dataMail) => {
-  return apiCall(async () => {
-    const accessToken = localStorage.getItem('accessToken');
-    const { id: userId, email: userEmail } = jwtDecode(accessToken);
+export const updateDataMail = async (dataMail) => {
+  const accessToken = localStorage.getItem('accessToken');
+  const { id: userId, email: userEmail } = jwtDecode(accessToken);
 
-    const dataFormatMail = {
-      userEmail,
-      clientEmail: dataMail.clientEmail,
-      forwardingEmail: dataMail.forwardingEmail,
-      purpose: dataMail.purpose,
-    };
+  const dataFormatMail = {
+    userEmail,
+    clientEmail: dataMail.clientEmail,
+    forwardingEmail: dataMail.forwardingEmail,
+    purpose: dataMail.purpose,
+  };
 
-    const response = await api.put(`/emails/atualizarencaminhamento/${userId}`, dataFormatMail);
-    return response.data;
-  });
+  return apiCall(api.put, `/emails/atualizarencaminhamento/${userId}`, dataFormatMail);
 };
 
-const verifyMail = async (dataMail) => {
-  return apiCall(async () => {
-    const response = await api.post('/emails/verificaremail', { email: dataMail.email, baseUrl: dataMail.baseUrl });
-    return response.data;
-  });
+export const verifyMail = async (tokenObj) => {
+  const response = await apiCall(api.get, `/emails/validar-email/${tokenObj.token}`);
+ 
+  return response;
+};
 
-}
+export const validateMail = async (dataValidation) => {
+  return apiCall(api.post, `/emails/enviar-token-verificacao`, { email: dataValidation.email,baseUrl: dataValidation.baseUrl });
 
-export { forwardEmail, createEmail, cancelForward, fetchUserEmails, activateForward, updateDataMail, };
+};

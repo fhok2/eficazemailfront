@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, CheckCircle, XCircle, RefreshCw, Plus, Loader } from "lucide-react";
 import { fetchUserEmails } from "@/services/emailService";
@@ -24,6 +24,9 @@ function DashboardContent() {
   const [refreshKey, setRefreshKey] = useState(0);
   const limit = 10;
   const [isCreateRedirectOpen, setIsCreateRedirectOpen] = useState(false);
+
+  // Add a ref to store the previous email data
+  const prevEmailDataRef = useRef(null);
 
   const updateLocalStorage = useCallback((newData) => {
     localStorage.setItem("emailData", JSON.stringify(newData));
@@ -54,7 +57,7 @@ function DashboardContent() {
         });
         updateLocalStorage(newData);
       } catch (error) {
-        console.error("Failed to fetch emails:", error);
+        console.error("Error loading emails:", error);
       }
       setIsLoading(false);
       setIsStatsLoading(false);
@@ -62,25 +65,59 @@ function DashboardContent() {
   }, [token, authChecked, currentPage, limit, updateLocalStorage]);
 
   useEffect(() => {
-    const storedData = getLocalStorageData();
-    if (storedData) {
-      setEmails(storedData.data || []);
-      setTotalPages(storedData.pagination?.totalPages || 1);
-      setEmailStats({
-        total: storedData.stats?.total || 0,
-        active: storedData.stats?.ativos || 0,
-        inactive: storedData.stats?.inativos || 0
-      });
-      setIsLoading(false);
-      setIsStatsLoading(false);
-    } else {
-      loadEmails();
-    }
-  }, [getLocalStorageData, loadEmails]);
+    loadEmails();
+  }, [currentPage, token, authChecked, refreshKey, loadEmails]);
+
+  // Add a new effect to listen for the custom event
+  useEffect(() => {
+    const handleEmailDataUpdated = () => {
+      const storedData = getLocalStorageData();
+      if (storedData) {
+        setEmails(storedData.data || []);
+        setTotalPages(storedData.pagination?.totalPages || 1);
+        setEmailStats({
+          total: storedData.stats?.total || 0,
+          active: storedData.stats?.ativos || 0,
+          inactive: storedData.stats?.inativos || 0
+        });
+      }
+    };
+
+    window.addEventListener('emailDataUpdated', handleEmailDataUpdated);
+
+    return () => {
+      window.removeEventListener('emailDataUpdated', handleEmailDataUpdated);
+    };
+  }, [getLocalStorageData]);
 
   useEffect(() => {
     loadEmails();
   }, [currentPage, token, authChecked, refreshKey, loadEmails]);
+
+  // Add a new effect to monitor localStorage changes
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "emailData") {
+        const newData = JSON.parse(e.newValue);
+        if (newData && JSON.stringify(newData) !== JSON.stringify(prevEmailDataRef.current)) {
+          setEmails(newData.data || []);
+          setTotalPages(newData.pagination?.totalPages || 1);
+          setEmailStats({
+            total: newData.stats?.total || 0,
+            active: newData.stats?.ativos || 0,
+            inactive: newData.stats?.inativos || 0
+          });
+          prevEmailDataRef.current = newData;
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const handleCreateRedirect = useCallback((newEmail) => {
     setIsCreateRedirectOpen(false);
