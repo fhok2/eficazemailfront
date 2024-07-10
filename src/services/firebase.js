@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD6JGbHFBg-2BNAc0rLVLHRrN54ad-fQxc",
-  authDomain: "eficazmail-c3c4f.firebaseapp.com",
-  projectId: "eficazmail-c3c4f",
-  storageBucket: "eficazmail-c3c4f.appspot.com",
-  messagingSenderId: "773589759203",
-  appId: "1:773589759203:web:56b752d71a123f361f41d6",
-  measurementId: "G-D7GZRJ7K0G"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
@@ -22,6 +22,7 @@ export const signInWithGoogle = async () => {
     const idToken = await user.getIdToken();
     return { user, idToken };
   } catch (error) {
+    console.error("Erro ao fazer login com Google:", error.message);
     return { error: error.message };
   }
 };
