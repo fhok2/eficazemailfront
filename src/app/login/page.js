@@ -18,6 +18,7 @@ import { loginWithGoogle } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/button/GoogleButton";
 import UserRegistration from "@/components/loginComponents/UserRegistration";
+export const dynamic = 'force-dynamic'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
