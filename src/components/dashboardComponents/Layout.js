@@ -67,19 +67,22 @@ const Sidebar = ({ sidebarOpen, closeSidebar, currentPage, setCurrentPage, openC
   const handleLogoutUser = async (e) => {
     e.preventDefault();
     setIsLoggingOut(true);
-    try {
-      const result = await handleLogout();
-      if (result.error) {
-        console.error(result.message);
-      } else {
-        router.push('/');
-      }
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-    } finally {
-      setIsLoggingOut(false);
+  
+    const logoutResponse = await handleLogout();
+    
+    if (logoutResponse && logoutResponse.message === 'Logout bem-sucedido.') {
+      localStorage.clear();
+      router.push('/');
+    } else if (logoutResponse && logoutResponse.error) {
+      localStorage.clear();
+      router.push('/');
     }
+  
+    setIsLoggingOut(false);
   };
+  
+  
+  
 
   const handleNavigation = (page) => (e) => {
     e.preventDefault();

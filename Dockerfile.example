@@ -1,23 +1,64 @@
 # Use uma imagem base Node.js oficial
-FROM node:18
-
-# Defina o diretório de trabalho dentro do contêiner
+FROM node:18-alpine AS deps
+# Verifique https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine para entender por que libc6-compat pode ser necessário.
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copie o package.json e o package-lock.json para o diretório de trabalho
-COPY package*.json ./
+# Instale as dependências com base no package-lock.json
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-# Instale as dependências com --legacy-peer-deps
-RUN npm install --legacy-peer-deps
-
-# Copie o restante do código da aplicação
+# Reconstrua o código-fonte apenas quando necessário
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Compile a aplicação
+# As variáveis Next.js precisam estar disponíveis durante o build
+ARG NEXT_PUBLIC_FIREBASE_API_KEY
+ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ARG NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ARG NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+ARG NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+ARG NEXT_PUBLIC_FIREBASE_APP_ID
+ARG NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+
+ENV NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY
+ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID=$NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+ENV NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+ENV NEXT_PUBLIC_FIREBASE_APP_ID=$NEXT_PUBLIC_FIREBASE_APP_ID
+ENV NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=$NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+
+# Next.js coleta dados de telemetria completamente anônimos sobre uso geral.
+# Saiba mais aqui: https://nextjs.org/telemetry
+# Descomente a linha abaixo caso queira desabilitar a telemetria durante o build.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
 RUN npm run build
 
-# Defina o comando para iniciar a aplicação
-CMD ["npm", "start"]
+# Imagem de produção, copie todos os arquivos e execute next
+FROM node:18-alpine AS runner
+WORKDIR /app
 
-# Exponha a porta na qual a aplicação será executada
+ENV NODE_ENV production
+# Descomente a linha abaixo caso queira desabilitar a telemetria durante a execução.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Configuração automática do Next.js usa essas diretivas para otimizar o cache
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
 EXPOSE 3000
+
+ENV PORT 3000
+
+CMD ["node", "server.js"]

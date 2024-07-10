@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { login as loginService, refreshTokenApiCall, checkEmail, resetPassword, requestPasswordReset, register as registerService, loginWithGoogle } from '@/services/authService';
+import { login as loginService, refreshTokenApiCall, checkEmail, resetPassword, requestPasswordReset, register as registerService, loginWithGoogle,logout } from '@/services/authService';
 import { useRouter } from 'next/navigation';
 
 export const useAuth = () => {
@@ -155,10 +155,10 @@ export const useAuth = () => {
       }
   };
 
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-    }
+  const handleLogout = async () => {
+
+    const result = await logout();
+  
     setToken(null);
     router.push('/login');
   };

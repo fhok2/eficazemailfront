@@ -22,7 +22,7 @@ export const login = async (credentials) => {
        
     const response = await apiCall('post', '/auth/login', { email: credentials.email, password: credentials.password});
     if (!response.error) {
-      console.log(response);
+     
       localStorage.setItem('accessToken', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);
       localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
@@ -49,7 +49,7 @@ export const loginWithGoogle = async () => {
       user: result.user,
       idToken: result.idToken
     });
-    console.log(response);
+  
     if (!response.error) {
       localStorage.setItem('accessToken', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);
@@ -100,6 +100,8 @@ export const logout = async () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('dashboardData');
+  localStorage.removeItem('emailData');
+
   return result;
 };
 
