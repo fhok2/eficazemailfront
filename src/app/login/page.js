@@ -7,47 +7,34 @@ import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/AuthContext";
 import {
   ArrowRight,
-  User,
   Mail,
-  Phone,
   Lock,
   Loader,
   AlertCircle,
-  LogIn,
 } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import ResetPassword from "@/components/loginComponents/resetPassword";
-import DDDs from "@/enums/ddds";
-import {
-  signInWithGoogle,
-  signUpWithEmailAndPassword,
-  signInWithEmail,
-} from "../../services/firebase";
 import { loginWithGoogle } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/button/GoogleButton";
+import UserRegistration from "@/components/loginComponents/UserRegistration";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    name: "",
-    phone: "",
   });
   const [error, setError] = useState("");
-  const [nameError, setNameError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
-  const [showPhoneError, setShowPhoneError] = useState(false);
   const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] =
     useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const router = useRouter();
 
-  const { handleLogin,isAuthenticated, redirectToDashboardIfAuthenticated,handleRegister } =
+  const { handleLogin, isAuthenticated, redirectToDashboardIfAuthenticated } =
     useAuthContext();
 
   useEffect(() => {
@@ -62,13 +49,11 @@ const LoginPage = () => {
       const response = await loginWithGoogle();
       if (response.error) {
         if (response.error.code === "auth/popup-closed-by-user") {
-          // O usuário fechou o popup, não precisamos mostrar um erro
           console.log("Login com Google cancelado pelo usuário");
         } else {
           setError(response.error.message || "Erro ao fazer login com Google");
         }
       } else {
-        // Login bem-sucedido, redirecionar para o dashboard
         router.push("/dashboard");
       }
     } catch (error) {
@@ -82,7 +67,7 @@ const LoginPage = () => {
     if (error) {
       const timer = setTimeout(() => {
         setError("");
-      }, 5000); // A mensagem de erro desaparecerá após 5 segundos
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -100,98 +85,25 @@ const LoginPage = () => {
     config: { tension: 300, friction: 10 },
   });
 
-  const nameRegex = /^[a-zA-ZÀ-ÖØ-öø-ÿ]+(\s+[a-zA-ZÀ-ÖØ-öø-ÿ]+)+$/;
-
-  const handleNameBlur = (e) => {
-    const { value } = e.target;
-    const trimmedValue = value.trim();
-    setFormData((prev) => ({ ...prev, name: trimmedValue }));
-    validateName(trimmedValue);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let finalValue = value;
-
-    if (name === "email") {
-      finalValue = value.trim().toLowerCase();
-    } else if (name === "name") {
-      validateName(value);
-    } else if (name === "phone") {
-      finalValue = value.replace(/\D/g, "").slice(0, 11);
-      validatePhone(finalValue);
-    } else {
-      finalValue = value.trim();
-    }
-
+    let finalValue = name === "email" ? value.trim().toLowerCase() : value.trim();
     setFormData((prev) => ({ ...prev, [name]: finalValue }));
     setError("");
   };
 
-  const validateName = (name) => {
-    if (!nameRegex.test(name)) {
-      setNameError("Por favor, digite nome e sobrenome válidos");
-    } else {
-      setNameError("");
-    }
-  };
-
-  const validatePhone = (phone) => {
-    if (phone.length !== 11) {
-      setPhoneError(
-        "Ops! Parece que seu número está incompleto. Lembre-se: são 11 dígitos, incluindo o DDD."
-      );
-    } else {
-      const ddd = phone.slice(0, 2);
-      if (!DDDs.includes(ddd)) {
-        setPhoneError(
-          "Hmm, esse DDD não parece familiar. Que tal conferir se digitou corretamente?"
-        );
-      } else {
-        setPhoneError("");
-      }
-    }
-  };
-
-  const handlePhoneBlur = () => {
-    validatePhone(formData.phone);
-    setShowPhoneError(true);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isRegistering && (nameError || phoneError)) {
-      setError(
-        "Ops! Parece que temos alguns detalhes para ajustar. Vamos dar uma olhada nos campos destacados?"
-      );
-      return;
-    }
     setLoading(true);
-    let response;
-
-    if (isRegistering) {
-      const credentials = {
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-        phone: formData.phone,
-      };
-      response = await handleRegister(
-        credentials
-      );
-    } else {
-      const credentials = {
-        email: formData.email,
-        password: formData.password,
-      };
-      response = await handleLogin(credentials);
-     
-    }
+    const credentials = {
+      email: formData.email,
+      password: formData.password,
+    };
+    const response = await handleLogin(credentials);
 
     if (response.error) {
       setError(response.message);
     } else {
-      
       window.location.href = "/dashboard";
     }
     setLoading(false);
@@ -199,12 +111,8 @@ const LoginPage = () => {
 
   const getIcon = (field) => {
     switch (field) {
-      case "name":
-        return <User size={18} />;
       case "email":
         return <Mail size={18} />;
-      case "phone":
-        return <Phone size={18} />;
       case "password":
         return <Lock size={18} />;
       default:
@@ -222,11 +130,7 @@ const LoginPage = () => {
         }`}
         htmlFor={field}
       >
-        {field === "name"
-          ? "Nome e Sobrenome"
-          : field === "phone"
-          ? "Telefone"
-          : field.charAt(0).toUpperCase() + field.slice(1)}
+        {field.charAt(0).toUpperCase() + field.slice(1)}
       </Label>
       <div className="relative">
         <Input
@@ -236,13 +140,7 @@ const LoginPage = () => {
           value={formData[field]}
           onChange={handleInputChange}
           onFocus={() => setFocusedField(field)}
-          onBlur={
-            field === "name"
-              ? handleNameBlur
-              : field === "phone"
-              ? handlePhoneBlur
-              : () => setFocusedField(null)
-          }
+          onBlur={() => setFocusedField(null)}
           required
           className="mt-1 bg-gray-800 bg-opacity-50 text-white border-gray-700 rounded-lg py-8 pl-12 w-full focus:ring-2 focus:ring-brand-light transition-all duration-300 placeholder-transparent"
         />
@@ -250,31 +148,27 @@ const LoginPage = () => {
           {getIcon(field)}
         </span>
       </div>
-      {field === "name" && nameError && (
-        <p className="text-red-500 text-xs mt-1">{nameError}</p>
-      )}
-      {field === "phone" && showPhoneError && phoneError && (
-        <animated.div
-          style={fadeIn}
-          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mt-2"
-        >
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <p>{phoneError}</p>
-          </div>
-        </animated.div>
-      )}
     </div>
   );
+
+  if (isRegistering) {
+    return (
+      <UserRegistration
+        onBackToLogin={() => setIsRegistering(false)}
+        handleGoogleSignInClick={handleGoogleSignInClick}
+        isGoogleLoading={isGoogleLoading}
+      />
+    );
+  }
 
   return (
     <>
       <AnimatedBackground />
-      <div className="flex flex-col justify-center items-center px-4 py-20 bg-transparent text-white relative z-10 min-h-screen">
-        <animated.div className="w-full max-w-md flex flex-col" style={fadeIn}>
+      <div className="flex flex-col justify-center items-center px-4 bg-transparent text-white relative z-10 h-full ">
+        <animated.div className="w-full max-w-md flex flex-col my-10" style={fadeIn}>
           <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
-              {isRegistering ? "Criar nova conta" : "Acesse sua conta"}
+              Acesse sua conta
             </span>
           </h1>
           <p className="text-xl text-gray-300 text-center mb-8">
@@ -296,22 +190,12 @@ const LoginPage = () => {
           >
             {renderFormField("email")}
             {renderFormField("password", "password")}
-            {isRegistering && (
-              <>
-                {renderFormField("name")}
-                {renderFormField("phone")}
-              </>
-            )}
             <animated.div style={buttonAnimation}>
               <div className="px-1">
                 <Button
                   type="submit"
-                  disabled={
-                    loading ||
-                    isGoogleLoading ||
-                    (isRegistering && (nameError || phoneError))
-                  }
-                  className="w-full py-6 px-4  m-auto bg-gradient-to-r from-teal-400 to-brand-light text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center"
+                  disabled={loading || isGoogleLoading}
+                  className="w-full py-6 px-4 m-auto bg-gradient-to-r from-teal-400 to-brand-light text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center"
                 >
                   {loading ? (
                     <div className="flex gap-3 items-center">
@@ -320,7 +204,7 @@ const LoginPage = () => {
                     </div>
                   ) : (
                     <div className="flex items-center">
-                      {isRegistering ? "Criar conta" : "Entrar"}
+                      Entrar
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </div>
                   )}
@@ -332,30 +216,24 @@ const LoginPage = () => {
             <GoogleButton
               onClick={handleGoogleSignInClick}
               loading={isGoogleLoading}
-              isRegistering={isRegistering}
+              isRegistering={false}
             />
           </div>
 
-          <animated.div className="mt-6 text-center" style={fadeIn}>
-            {!isRegistering && (
-              <button
-                onClick={() => setIsResetPasswordModalVisible(true)}
-                className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none"
-              >
-                Esqueceu sua senha?
-              </button>
-            )}
+          <animated.div className="mt-6 text-center " style={fadeIn}>
+            <button
+              onClick={() => setIsResetPasswordModalVisible(true)}
+              className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none"
+            >
+              Esqueceu sua senha?
+            </button>
             <p className="text-sm font-medium text-gray-400 mt-4">
-              {isRegistering ? "Já possui uma conta?" : "Não tem uma conta?"}
+              Não tem uma conta?
               <button
-                onClick={() => {
-                  setIsRegistering(!isRegistering);
-                  setFormData({ email: "", password: "", name: "", phone: "" });
-                  setError("");
-                }}
+                onClick={() => setIsRegistering(true)}
                 className="text-teal-300 hover:text-teal-400 focus:outline-none font-semibold ml-2"
               >
-                {isRegistering ? "Entrar" : "Criar conta"}
+                Criar conta
               </button>
             </p>
           </animated.div>
@@ -368,7 +246,6 @@ const LoginPage = () => {
       />
     </>
   );
-
 };
 
 export default LoginPage;
