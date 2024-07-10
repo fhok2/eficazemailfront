@@ -49,7 +49,7 @@ const LoginPage = () => {
       const response = await loginWithGoogle();
       if (response.error) {
         if (response.error.code === "auth/popup-closed-by-user") {
-          console.log("Login com Google cancelado pelo usuário");
+       
         } else {
           setError(response.error.message || "Erro ao fazer login com Google");
         }
