@@ -74,3 +74,7 @@ export const validateMail = async (dataValidation) => {
   return apiCall(api.post, `/emails/enviar-token-verificacao`, { email: dataValidation.email,baseUrl: dataValidation.baseUrl });
 
 };
+
+export const sendEmail = async (dataEmail) => {
+  return apiCall(api.post, '/emails/enviar-email', dataEmail);
+};

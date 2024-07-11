@@ -53,7 +53,7 @@ export const loginWithGoogle = async () => {
     if (!response.error) {
       localStorage.setItem('accessToken', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);
-      localStorage.setItem('dashboardData', JSON.stringify(response.user));
+      localStorage.setItem('dashboardData', JSON.stringify(response.dashboardData));
      
     }
     return response;

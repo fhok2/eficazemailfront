@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { CopyIcon, CheckIcon, XIcon, Edit2Icon, RefreshCwIcon, Loader } from 'lucide-react';
+import { CopyIcon, CheckIcon, XIcon, Edit2Icon, RefreshCwIcon, Loader, Send } from 'lucide-react';
 import DeactivateAccountModal from '../modal/DeactivateAccountModal';
 import AccountActivatedModal from '../modal/AccountActivatedModal';
 import UpdateEmailDataModal from '../modal/UpdateEmailDataModal';
+import EmailSendModal from '../modal/EmailsendModal';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate, index }) => {
+const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate, onSendEmail, index }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const cardVariants = {
@@ -87,6 +88,14 @@ const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate, 
             >
               <Edit2Icon size={18} />
             </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => onSendEmail(email)}
+              className="p-2 rounded-full bg-teal-100 text-teal-600 dark:bg-teal-800 dark:text-teal-100"
+            >
+              <Send size={18} />
+            </motion.button>
           </div>
         </div>
       </div>
@@ -94,13 +103,12 @@ const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate, 
   );
 };
 
-
-
 const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
   const [copied, setCopied] = useState(null);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isEmailSendModalOpen, setIsEmailSendModalOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState(null);
 
   const handleCopyEmail = (email) => {
@@ -125,10 +133,16 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
     setIsUpdateModalOpen(true);
   };
 
+  const handleOpenEmailSendModal = (email) => {
+    setSelectedEmail(email);
+    setIsEmailSendModalOpen(true);
+  };
+
   const handleCloseModals = () => {
     setIsDeactivateModalOpen(false);
     setIsActivateModalOpen(false);
     setIsUpdateModalOpen(false);
+    setIsEmailSendModalOpen(false);
     setSelectedEmail(null);
     loadEmails();
   };
@@ -137,6 +151,7 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
     setIsDeactivateModalOpen(false);
     setIsActivateModalOpen(false);
     setIsUpdateModalOpen(false);
+    setIsEmailSendModalOpen(false);
     setSelectedEmail(null);
   };
 
@@ -154,8 +169,8 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
   if (isLoading) {
     return (
       <div className="flex h-96 justify-center items-center ">
-              <Loader className="h-10 w-10 animate-spin text-primary" />
-            </div>
+        <Loader className="h-10 w-10 animate-spin text-primary" />
+      </div>
     );
   }
 
@@ -174,24 +189,26 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
 
   return (
     <motion.div 
-      className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 h-full"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <AnimatePresence>
-        {emails.map((email) => (
-          <EmailCard
-            key={email.address}
-            email={email}
-            onCopy={handleCopyEmail}
-            copied={copied}
-            onActivate={handleOpenActivateModal}
-            onDeactivate={handleOpenDeactivateModal}
-            onUpdate={handleOpenUpdateModal}
-          />
-        ))}
-      </AnimatePresence>
+    className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 h-full"
+    variants={containerVariants}
+    initial="hidden"
+    animate="visible"
+  >
+    <AnimatePresence>
+      {emails.map((email, index) => (
+        <EmailCard
+          key={email.address}
+          email={email}
+          onCopy={handleCopyEmail}
+          copied={copied}
+          onActivate={handleOpenActivateModal}
+          onDeactivate={handleOpenDeactivateModal}
+          onUpdate={handleOpenUpdateModal}
+          onSendEmail={handleOpenEmailSendModal}
+          index={index}
+        />
+      ))}
+    </AnimatePresence>
       {isDeactivateModalOpen && selectedEmail && (
         <DeactivateAccountModal
           redirectmail={selectedEmail.forwarding}
@@ -209,13 +226,21 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
         />
       )}
       {isUpdateModalOpen && selectedEmail && (
-         <UpdateEmailDataModal
-         redirectmail={selectedEmail.forwarding}
-         email={selectedEmail.address}
-         onClose={handleCloseModals}
-         onCloseClick={handleCloseClick}
-         purpose={selectedEmail.purpose}
-       />
+        <UpdateEmailDataModal
+          redirectmail={selectedEmail.forwarding}
+          email={selectedEmail.address}
+          onClose={handleCloseModals}
+          onCloseClick={handleCloseClick}
+          purpose={selectedEmail.purpose}
+        />
+      )}
+      {isEmailSendModalOpen && selectedEmail && (
+        <EmailSendModal
+          isOpen={isEmailSendModalOpen}
+          onClose={handleCloseModals}
+          userEmail={selectedEmail.address}
+          recipientEmail={selectedEmail.address}
+        />
       )}
     </motion.div>
   );
