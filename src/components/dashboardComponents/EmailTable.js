@@ -3,8 +3,9 @@ import { CopyIcon, CheckIcon, XIcon, Edit2Icon, RefreshCwIcon, Loader, Send } fr
 import DeactivateAccountModal from '../modal/DeactivateAccountModal';
 import AccountActivatedModal from '../modal/AccountActivatedModal';
 import UpdateEmailDataModal from '../modal/UpdateEmailDataModal';
-import EmailSendModal from '../modal/EmailsendModal';
+
 import { motion, AnimatePresence } from 'framer-motion';
+import EmailSendModal from '../modal/SendEmailModal';
 
 const EmailCard = ({ email, onCopy, copied, onActivate, onDeactivate, onUpdate, onSendEmail, index }) => {
   const [isHovered, setIsHovered] = useState(false);
