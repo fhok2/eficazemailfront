@@ -6,12 +6,14 @@ import PricingSection from "@/components/PricingSection";
 import EficazMailFeatures from "@/components/Features";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import FAQ from "@/components/Faq";
+import EficazMailInfo from "@/components/EficazMailArticle";
 
 
 const sections = [
   { component: HeroSection, key: "hero" },
   { component: EficazMailFeatures, key: "features" },
   { component: PricingSection, key: "pricing" },
+  { component: EficazMailInfo, key: "about" },
   { component: FAQ, key: "faq" },
 ];
 

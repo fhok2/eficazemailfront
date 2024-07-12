@@ -80,7 +80,7 @@ const HeroSection = () => {
               <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
             </a>
           </Link>
-          <a href="#faq" className="flex items-center justify-center px-8 py-3 rounded-lg text-lg font-semibold text-white transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900">
+          <a href="#about" className="flex items-center justify-center px-8 py-3 rounded-lg text-lg font-semibold text-white transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900">
             Saiba Mais
           </a>
         </div>

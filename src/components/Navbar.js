@@ -8,6 +8,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const menuItems = [
+    { label: "Sobre", href: "/#about" },
     { label: "Planos", href: "/#plain" },
     { label: "FAQ", href: "/#faq" },
     { label: "Login", href: "/dashboard" },

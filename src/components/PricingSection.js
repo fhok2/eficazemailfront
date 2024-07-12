@@ -19,7 +19,7 @@ const PricingSection = () => {
   return (
     <section
       id="plain"
-      className="flex flex-col justify-center items-center gap-10 max-w-screen-lg mx-auto my-20 h-screen "
+      className="flex flex-col justify-center items-center gap-10 max-w-screen-lg mx-auto my-20 h-full "
     >
       
       <div className="flex flex-wrap  justify-center gap-10 sm:gap-4 md:gap-7 lg-gap-10 xl-gap-10">
