@@ -86,7 +86,7 @@ const EmailSendModal = ({ isOpen, onClose, userEmail }) => {
   if (!isOpen) return null;
 
   return (
-    <>
+    
       <animated.div
         style={backdropSpring}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-80"
@@ -215,7 +215,7 @@ const EmailSendModal = ({ isOpen, onClose, userEmail }) => {
         </animated.div>
       </animated.div>
      
-    </>
+    
   );
 };
 

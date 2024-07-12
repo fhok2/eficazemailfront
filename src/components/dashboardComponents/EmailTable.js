@@ -238,7 +238,7 @@ const EmailTable = ({ isLoading, emails = [], loadEmails }) => {
       {isEmailSendModalOpen && selectedEmail && (
         <EmailSendModal
           isOpen={isEmailSendModalOpen}
-          onClose={handleCloseModals}
+          onClose={handleCloseClick}
           userEmail={selectedEmail.address}
           recipientEmail={selectedEmail.address}
         />
