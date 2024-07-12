@@ -5,20 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/AuthContext";
-import {
-  ArrowRight,
-  Mail,
-  Lock,
-  Loader,
-  AlertCircle,
-} from "lucide-react";
+import { ArrowRight, Mail, Lock, Loader, AlertCircle } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import ResetPassword from "@/components/loginComponents/resetPassword";
 import { loginWithGoogle } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/button/GoogleButton";
 import UserRegistration from "@/components/loginComponents/UserRegistration";
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
+import Link from "next/link";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -50,7 +45,6 @@ const LoginPage = () => {
       const response = await loginWithGoogle();
       if (response.error) {
         if (response.error.code === "auth/popup-closed-by-user") {
-       
         } else {
           setError(response.error.message || "Erro ao fazer login com Google");
         }
@@ -88,7 +82,8 @@ const LoginPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let finalValue = name === "email" ? value.trim().toLowerCase() : value.trim();
+    let finalValue =
+      name === "email" ? value.trim().toLowerCase() : value.trim();
     setFormData((prev) => ({ ...prev, [name]: finalValue }));
     setError("");
   };
@@ -166,7 +161,10 @@ const LoginPage = () => {
     <>
       <AnimatedBackground />
       <div className="flex flex-col justify-center items-center px-4 bg-transparent text-white relative z-10 h-full ">
-        <animated.div className="w-full max-w-md flex flex-col my-10" style={fadeIn}>
+        <animated.div
+          className="w-full max-w-md flex flex-col my-10"
+          style={fadeIn}
+        >
           <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-center">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
               Acesse sua conta
@@ -222,13 +220,22 @@ const LoginPage = () => {
           </div>
 
           <animated.div className="mt-6 text-center " style={fadeIn}>
+          <p className="text-xs font-medium text-gray-300 mt-2">
+              Ao fazer login, você concorda com nossos
+              <Link
+                href="/terms-of-service"
+                className="text-teal-300 hover:text-teal-400 focus:outline-none font-semibold ml-1"
+              >
+                Termos e Condições
+              </Link>
+            </p>
             <button
               onClick={() => setIsResetPasswordModalVisible(true)}
-              className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none"
+              className="text-sm font-semibold text-teal-300 hover:text-teal-400 focus:outline-none mt-3"
             >
               Esqueceu sua senha?
             </button>
-            <p className="text-sm font-medium text-gray-400 mt-4">
+            <p className="text-sm font-medium text-gray-300 mt-4">
               Não tem uma conta?
               <button
                 onClick={() => setIsRegistering(true)}
@@ -237,6 +244,7 @@ const LoginPage = () => {
                 Criar conta
               </button>
             </p>
+           
           </animated.div>
         </animated.div>
       </div>
