@@ -1,17 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
 
 const Pagination = ({ totalPages = 1, currentPage, onPageChange }) => {
   const [pageRange, setPageRange] = useState([1, 4]);
   const paginationRef = useRef(null);
 
-  useEffect(() => {
+  const updatePageRange = useCallback(() => {
     if (currentPage < pageRange[0]) {
       setPageRange([Math.max(1, currentPage - 3), currentPage]);
     } else if (currentPage > pageRange[1]) {
       setPageRange([currentPage, Math.min(totalPages, currentPage + 3)]);
     }
-  }, [currentPage, totalPages]);
+  }, [currentPage, totalPages, pageRange]);
+
+  useEffect(() => {
+    updatePageRange();
+  }, [updatePageRange]);
 
   useEffect(() => {
     gsap.from(paginationRef.current, {

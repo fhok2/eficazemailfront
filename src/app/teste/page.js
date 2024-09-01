@@ -1,24 +1,87 @@
-import React from 'react';
+'use client'
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const GoogleMapsIframe = ({ width = '800', height = '600', zoom = 50 }) => {
-  const baseUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3541.905482337989!2d-48.49330342357704!3d-27.503314798518783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952746daefd1729d%3A0xbaad8a8ba6befa1f!2sServid%C3%A3o%20Julio%20da%20Rosa%2C%20130%20-%20Ratones%2C%20Florian%C3%B3polis%20-%20SC%2C%2088052-118%2C%20Brazil!5e0!3m2!1sen!2sus!4v1720796648206!5m2!1sen!2sus";
-  
-  const url = new URL(baseUrl);
-  url.searchParams.set('z', zoom.toString());
+gsap.registerPlugin(ScrollTrigger);
+
+const ImmersiveSection = () => {
+  const sectionRefs = useRef([]);
+
+  useEffect(() => {
+    const sections = sectionRefs.current;
+
+    // Animação inicial de zoom
+    gsap.from('body', {
+      duration: 2,
+      scale: 0.8,
+      opacity: 0,
+      ease: 'power3.out'
+    });
+
+    // Animações de rolagem para cada seção
+    sections.forEach((section, index) => {
+      gsap.fromTo(
+        section,
+        {
+          opacity: 0,
+          y: 100,
+          scale: 0.8
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 80%',
+            end: 'top 20%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+
+      // Efeito parallax no título
+      gsap.to(section.querySelector('h2'), {
+        y: -50,
+        opacity: 0.5,
+        scrollTrigger: {
+          trigger: section,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    });
+
+    // Limpeza
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  const sections = [
+    { title: 'Features', content: 'Discover our cutting-edge features designed to elevate your experience.' },
+    { title: 'About', content: 'Learn about our mission to revolutionize the industry with innovative solutions.' },
+    { title: 'Services', content: 'Explore our comprehensive range of services tailored to meet your unique needs.' }
+  ];
 
   return (
-    <div className="container">
-      <iframe
-        src={url.toString()}
-        width={width}
-        height={height}
-        style={{ border: 0 }}
-        allowFullScreen=""
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-      />
+    <div className="bg-teal-900 text-white min-h-screen">
+      {sections.map((section, index) => (
+        <div
+          key={index}
+          ref={el => (sectionRefs.current[index] = el)}
+          className="min-h-screen flex flex-col justify-center items-center p-8"
+        >
+          <h2 className="text-6xl font-bold mb-8 text-teal-300">{section.title}</h2>
+          <p className="text-2xl max-w-2xl text-center">{section.content}</p>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default GoogleMapsIframe;
+export default ImmersiveSection;

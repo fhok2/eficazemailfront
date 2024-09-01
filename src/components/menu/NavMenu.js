@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAnimate, stagger } from "framer-motion";
 import Link from "next/link";
 
@@ -87,13 +87,13 @@ const Menu = ({ closeMenu }) => (
 function useMenuAnimation(isOpen) {
   const [scope, animate] = useAnimate();
 
-  useEffect(() => {
+  const animateMenu = useCallback(() => {
     const menuAnimations = isOpen
       ? [
           [
             "nav",
             { transform: "translateX(0%)" },
-            { ease: [0.10, 0.65, 0.53, 1], duration: 0.5 }, // Ajuste a duração aqui
+            { ease: [0.10, 0.65, 0.53, 1], duration: 0.5 },
           ],
           [
             ".text-background",
@@ -124,7 +124,11 @@ function useMenuAnimation(isOpen) {
       ],
       ...menuAnimations,
     ]);
-  }, [isOpen]);
+  }, [isOpen, animate]);
+
+  useEffect(() => {
+    animateMenu();
+  }, [animateMenu]);
 
   return scope;
 }
@@ -152,7 +156,7 @@ export default function NavMenu() {
       <MenuToggle toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} />
       {isOpen && (
         <div
-          className="fixed bg-black bg-opacity-50 z-30"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsOpen(false)}
         />
       )}

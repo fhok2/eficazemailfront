@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { login as loginService, refreshTokenApiCall, checkEmail, resetPassword, requestPasswordReset, register as registerService, loginWithGoogle,logout } from '@/services/authService';
+import { login as loginService, refreshTokenApiCall, checkEmail, resetPassword, requestPasswordReset, register as registerService, loginWithGoogle, logout } from '@/services/authService';
 import { useRouter } from 'next/navigation';
 
 export const useAuth = () => {
@@ -27,22 +27,16 @@ export const useAuth = () => {
       const currentTime = Date.now() / 1000;
       return decodedToken.exp > currentTime;
     } catch (error) {
-    
       return false;
     }
   }, []);
 
-  useEffect(() => {
-    const checkLocalStorage = () => {
-      const storedToken = localStorage.getItem('accessToken');
-      
-    };
-
-    window.addEventListener('storage', checkLocalStorage);
-    checkLocalStorage();
-
-    return () => window.removeEventListener('storage', checkLocalStorage);
-  }, [token]);
+  const handleLogout = useCallback(async () => {
+    const result = await logout();
+    setToken(null);
+    setIsAuthenticated(false);
+    router.push('/login');
+  }, [router]);
 
   const refreshAuthToken = useCallback(async () => {
     if (isRefreshing.current || refreshPromiseRef.current) {
@@ -67,7 +61,6 @@ export const useAuth = () => {
           return true;
         }
       } catch (error) {
-       
         handleLogout();
         return false;
       } finally {
@@ -77,7 +70,7 @@ export const useAuth = () => {
     })();
 
     return refreshPromiseRef.current;
-  }, []);
+  }, [handleLogout]);
 
   const checkAuth = useCallback(async () => {
     if (typeof window === 'undefined') return;
@@ -86,10 +79,8 @@ export const useAuth = () => {
     
     if (storedToken) {
       if (validateToken(storedToken)) {
-        // Token válido, apenas atualize o estado
         setToken(storedToken);
       } else {
-        // Token expirado, tente refresh
         const refreshed = await refreshAuthToken();
         if (!refreshed) {
           localStorage.removeItem('accessToken');
@@ -98,7 +89,6 @@ export const useAuth = () => {
         }
       }
     } else {
-      // Não há token, não tente refresh
       router.push('/login');
       return;
     }
@@ -128,18 +118,17 @@ export const useAuth = () => {
   }, [authChecked, checkAuth]);
 
   const handleLogin = async (credentials) => {
-    
     const response = await loginService(credentials);
    
     if (response.error) {
       return { error: true, message: response.message };
     } else {
-   
       if (typeof window !== 'undefined') {
         localStorage.setItem('accessToken', response.token);
         localStorage.setItem('refreshToken', response.refreshToken);
       }
-      setToken(token);
+      setToken(response.token);
+      setIsAuthenticated(true);
       return { error: false };
     }
   };
@@ -148,19 +137,11 @@ export const useAuth = () => {
     const removeSpace = email.replace(/\s/g, '');
     const response = await checkEmail(removeSpace);
   
-      if (response.code === 200) {
-        return { error: false };
-      } else {
-        return { error: true, message: response.message || 'E-mail não registrado.' };
-      }
-  };
-
-  const handleLogout = async () => {
-
-    const result = await logout();
-  
-    setToken(null);
-    router.push('/login');
+    if (response.code === 200) {
+      return { error: false };
+    } else {
+      return { error: true, message: response.message || 'E-mail não registrado.' };
+    }
   };
 
   const scheduleTokenRefresh = useCallback(() => {
@@ -173,7 +154,6 @@ export const useAuth = () => {
         const refreshTimer = setTimeout(async () => {
           const refreshed = await refreshAuthToken();
           if (refreshed) {
-            // Token refreshed successfully, update the state
             setToken(localStorage.getItem('accessToken'));
           }
         }, (expiresIn - refreshBuffer) * 1000);
@@ -214,7 +194,6 @@ export const useAuth = () => {
         setIsAuthenticated(true);
         router.push('/dashboard');
       } else {
-        // Token expirado, tente refresh
         const refreshed = await refreshAuthToken();
         if (refreshed) {
           const newToken = localStorage.getItem('accessToken');
@@ -222,7 +201,6 @@ export const useAuth = () => {
           setIsAuthenticated(true);
           router.push('/dashboard');
         } else {
-          // Se o refresh falhar, limpe o token e redirecione para o login
           localStorage.removeItem('accessToken');
           setToken(null);
           setIsAuthenticated(false);
@@ -231,14 +209,6 @@ export const useAuth = () => {
       }
     }
   }, [router, validateToken, refreshAuthToken]);
-
-  // const redirectToDashboardIfAuthenticated = useCallback(() => {
-  //   const storedToken = localStorage.getItem('accessToken');
-  //   if (storedToken && validateToken(storedToken)) {
-  //     router.push('/dashboard');
-  //   }
-  // }, [router, validateToken]);
-
 
   const handleRegister = async (userData) => {
     try {
@@ -252,6 +222,7 @@ export const useAuth = () => {
           localStorage.setItem('accessToken', token);
         }
         setToken(token);
+        setIsAuthenticated(true);
         return { error: false };
       }
     } catch (error) {
@@ -272,21 +243,18 @@ export const useAuth = () => {
     }
   };
 
-  const handlePasswordReset = async (email,baseUrl) => {
+  const handlePasswordReset = async (email, baseUrl) => {
     try {
-      const response = await requestPasswordReset(email,baseUrl);
+      const response = await requestPasswordReset(email, baseUrl);
       if (response.error) {
         return { error: true, message: response.message };
       } else {
         return { error: false };
       }
     } catch (error) {
-    
       return { error: true, message: error.message };
     }
   }
-
-
 
   return { 
     isAuthenticated: !!token && authChecked, 
@@ -299,7 +267,6 @@ export const useAuth = () => {
     handleCheckEmail,
     handleRegister,
     handleNewPassword,
-    isAuthenticated,
     handlePasswordReset,
     handleGoogleSignIn
   };

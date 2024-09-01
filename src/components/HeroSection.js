@@ -1,17 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Mail, Shield, Settings, ArrowRight } from 'lucide-react';
 
-
-
 const TypingEffect = () => {
-  const sequence = [
+  const sequence = useMemo(() => [
     "Proteja-se contra spam e vazamento de dados.",
     "Gerencie facilmente seus e-mails no dashboard.",
     "Crie múltiplos e-mails de redirecionamento.",
     "Identifique a origem de cada e-mail com marcações personalizadas.",
-  ];
+  ], []);
 
   const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
@@ -50,13 +48,9 @@ const TypingEffect = () => {
   );
 };
 
-
-
 const HeroSection = () => {
   return (
-    <section className="relative  flex w-full flex-col items-center justify-center px-4 py-20 mx-auto bg-transparent text-white overflow-hidden h-full ">
-  
-      
+    <section className="relative flex w-full flex-col items-center justify-center px-4 py-20 mx-auto bg-transparent text-white overflow-hidden h-full">
       <div className="relative z-10 flex flex-col items-center justify-center max-w-4xl mx-auto text-center">
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 animate-fade-in-up">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 to-brand-light">
@@ -87,17 +81,17 @@ const HeroSection = () => {
       </div>
 
       <div className="relative z-10 grid grid-cols-3 sm:grid-cols-3 gap-4 sm:gap-8 mt-8 sm:mt-16 text-center ">
-  {[
-    { icon: <Mail className="w-6 h-6 sm:w-12  sm:h-12 mb-1 sm:mb-4" />, title: "E-mails Ilimitados" },
-    { icon: <Shield className="w-6 h-6 sm:w-12 sm:h-12 mb-1 sm:mb-4 " />, title: "Proteção Avançada" },
-    { icon: <Settings className="w-6 h-6 sm:w-12 sm:h-12 mb-1 sm:mb-4" />, title: "Controle Total" },
-  ].map((feature, index) => (
-    <div key={index} className="flex flex-col items-center p-3 sm:p-6 bg-gray-800 bg-opacity-50 rounded-lg backdrop-filter backdrop-blur-lg">
-      {feature.icon}
-      <h3 className="text-sm sm:text-xl font-semibold">{feature.title}</h3>
-    </div>
-  ))}
-</div>
+        {[
+          { icon: <Mail className="w-6 h-6 sm:w-12  sm:h-12 mb-1 sm:mb-4" />, title: "E-mails Ilimitados" },
+          { icon: <Shield className="w-6 h-6 sm:w-12 sm:h-12 mb-1 sm:mb-4 " />, title: "Proteção Avançada" },
+          { icon: <Settings className="w-6 h-6 sm:w-12 sm:h-12 mb-1 sm:mb-4" />, title: "Controle Total" },
+        ].map((feature, index) => (
+          <div key={index} className="flex flex-col items-center p-3 sm:p-6 bg-gray-800 bg-opacity-50 rounded-lg backdrop-filter backdrop-blur-lg">
+            {feature.icon}
+            <h3 className="text-sm sm:text-xl font-semibold">{feature.title}</h3>
+          </div>
+        ))}
+      </div>
     </section>
   );
 };
