@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const baseURL = "http://localhost:3005/api";
-const baseURL = 'https://emailpix.up.railway.app/api';
+const baseURL = 'https://email-pix.onrender.com/api';
 
 const axiosInstance = axios.create({
   baseURL,
